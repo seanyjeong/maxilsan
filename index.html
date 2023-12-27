@@ -22,35 +22,25 @@
             border: 1px solid #888;
             width: 30%;
         }
-        th.대학명, td.대학명 {
-            min-width: 7em;
-            text-align: center;
-        }
-        th.학과명, td.학과명 {
-            min-width: 7em;
-            text-align: center;
-        }
-        th.수능점수, td.수능점수 {
-            min-width: 6em;
-            text-align: center;
-        }
-        th.내신점수, td.내신점수 {
-            min-width: 6em;
-            text-align: center;
-        }
+
         th, td {
             text-align: center;
         }
         input[type="text"] {
             width: 3em;
         }
-        @media screen and (max-width: 600px) {
-            table {
-                width: 100%;
-            }
-        }
+@media screen and (max-width: 600px) {
+    th, td {
+        min-width: 3em;  // 더 작은 값으로 설정
+    }
+}
+@media screen and (max-width: 600px) {
+    body {
+        font-size: 18px;  // 적절한 크기로 설정
+    }
+}
     </style>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </style>
 </head>
 <body>
