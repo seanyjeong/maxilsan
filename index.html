@@ -44,6 +44,11 @@
         input[type="text"] {
             width: 5em;
         }
+        @media screen and (max-width: 600px) {
+            table {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -104,7 +109,7 @@
                             var groups = ["가군", "나군", "다군"];
 
                             loadCsvData().then(function(csvData) {
-  groups.forEach(function(group) {
+     groups.forEach(function(group) {
         // "대학명", "학과명", "수능점수", "내신점수"에 대한 테이블 생성
         var table1 = document.createElement('table');
         var thead1 = document.createElement('thead');
@@ -145,7 +150,7 @@
         var 실기종목 = csvData[data[group]["대학명"] + data[group]["학과명"]];
         var tr = document.createElement('tr');
         실기종목.forEach(function(종목) {
-            if (종목 !== '') {  // 실기종목이 빈 문자열이 아닌 경우에만 헤더를 생성
+            if (종목.trim() !== '') {  // 실기종목이 공백이 아닌 경우에만 헤더를 생성
                 var th = document.createElement('th');
                 th.textContent = 종목;
                 th.style.fontWeight = 'normal';  // 글자를 굵게 하지 않음
@@ -157,7 +162,7 @@
         // "실기종목" 입력칸 생성
         var tr = document.createElement('tr');
         실기종목.forEach(function(종목) {
-            if (종목 !== '') {  // 실기종목이 빈 문자열이 아닌 경우에만 입력칸을 생성
+            if (종목.trim() !== '') {  // 실기종목이 공백이 아닌 경우에만 입력칸을 생성
                 var td = document.createElement('td');
                 var input = document.createElement('input');
                 input.type = 'text';
@@ -173,7 +178,6 @@
 
         $("#" + group).append(table2);
     });
-
                                 $("#loginModal").hide();
                                 $("#userData").show();
                             });
