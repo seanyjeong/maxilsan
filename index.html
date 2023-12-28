@@ -39,6 +39,11 @@
             width: 100%;
             height: auto;
         }
+
+        /* 모바일 화면에서의 스타일 */
+        @media screen and (max-width: 600px) {
+            /* 여기에 모바일 화면에서 적용할 스타일을 추가하세요. */
+        }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
@@ -92,8 +97,8 @@
     <img class="responsive" src="https://github.com/seanyjeong/maxilsan/blob/main/ilsanmax.png?raw=true" alt="타이틀 이미지">
     <h2 style="text-align:center;">가군</h2>
     <div style="text-align: center;">
-        <span id="가군-대학명" style="display: inline-block;"></span>
-        <span id="가군-학과명" style="display: inline-block;"></span>
+        <span id="가군-대학명" style="display: inline-block; font-size: 20px; font-weight: bold; margin-right: 20px;"></span>
+        <span id="가군-학과명" style="display: inline-block; font-size: 20px; font-weight: bold;"></span>
     </div>
     <div style="display: flex; justify-content: space-around;">
         <div>
@@ -117,20 +122,60 @@
             <p id="가군-합격가능성" style="text-align:center;"></p>
         </div>
     </div>
+    <h2 style="text-align:center;">나군</h2>
+    <div style="text-align: center;">
+        <span id="나군-대학명" style="display: inline-block; font-size: 20px; font-weight: bold; margin-right: 20px;"></span>
+        <span id="나군-학과명" style="display: inline-block; font-size: 20px; font-weight: bold;"></span>
+    </div>
+    <div style="display: flex; justify-content: space-around;">
+        <div>
+            <p style="text-align:center;"><strong>수능</strong></p>
+            <p id="나군-수능점수" style="text-align:center;"></p>
+        </div>
+        <div>
+            <p style="text-align:center;"><strong>내신</strong></p>
+            <p id="나군-내신점수" style="text-align:center;"></p>
+        </div>
+        <div>
+            <p style="text-align:center;"><strong>실기</strong></p>
+            <p id="나군-실기점수" style="text-align:center;"></p>
+        </div>
+        <div>
+            <p style="text-align:center;"><strong>총점</strong></p>
+            <p id="나군-총점" style="text-align:center;"></p>
+        </div>
+        <div>
+            <p style="text-align:center;"><strong>합격가능성</strong></p>
+            <p id="나군-합격가능성" style="text-align:center;"></p>
+        </div>
+    </div>
 
-        <h2 style="text-align:center;">나군</h2>
-<div style="text-align: center;">
-    <span id="나군-대학명" style="display: inline-block;"></span>
-    <span id="나군-학과명" style="display: inline-block;"></span>
-</div>
-        <p style="text-align:center;"><strong>수능  내신   실기   총점   합격가능성</strong></p>
-
-        <h2 style="text-align:center;">다군</h2>
-<div style="text-align: center;">
-    <span id="다군-대학명" style="display: inline-block;"></span>
-    <span id="다군-학과명" style="display: inline-block;"></span>
-</div>
-        <p style="text-align:center;"><strong>수능  내신   실기   총점   합격가능성</strong></p>
+    <h2 style="text-align:center;">다군</h2>
+    <div style="text-align: center;">
+        <span id="다군-대학명" style="display: inline-block; font-size: 20px; font-weight: bold; margin-right: 20px;"></span>
+        <span id="다군-학과명" style="display: inline-block; font-size: 20px; font-weight: bold;"></span>
+    </div>
+    <div style="display: flex; justify-content: space-around;">
+        <div>
+            <p style="text-align:center;"><strong>수능</strong></p>
+            <p id="다군-수능점수" style="text-align:center;"></p>
+        </div>
+        <div>
+            <p style="text-align:center;"><strong>내신</strong></p>
+            <p id="다군-내신점수" style="text-align:center;"></p>
+        </div>
+        <div>
+            <p style="text-align:center;"><strong>실기</strong></p>
+            <p id="다군-실기점수" style="text-align:center;"></p>
+        </div>
+        <div>
+            <p style="text-align:center;"><strong>총점</strong></p>
+            <p id="다군-총점" style="text-align:center;"></p>
+        </div>
+        <div>
+            <p style="text-align:center;"><strong>합격가능성</strong></p>
+            <p id="다군-합격가능성" style="text-align:center;"></p>
+        </div>
     </div>
 </body>
 </html>
