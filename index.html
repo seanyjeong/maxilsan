@@ -1,86 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>성적 조회</title>
     <style>
+        /* 모달창 스타일 */
         .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            padding-top: 100px; 
             left: 0;
             top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgb(0,0,0); 
+            background-color: rgba(0,0,0,0.4); 
         }
+
+        /* 모달창 내용 스타일 */
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto;
+            margin: auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 30%;
+            width: 80%;
         }
 
-        th, td {
-            text-align: center;
+        /* 이미지 스타일 */
+        .responsive {
+            width: 100%;
+            height: auto;
         }
-        input[type="text"] {
-            width: 3em;
-        }
-@media screen and (max-width: 600px) {
-    th, td {
-        min-width: 3em;  // 더 작은 값으로 설정
-    }
-}
-@media screen and (max-width: 600px) {
-    body {
-        font-size: 18px;  // 적절한 크기로 설정
-    }
-}
     </style>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </style>
-</head>
-<body>
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <h2>로그인</h2>
-            <label for="name">이름:</label><br>
-            <input type="text" id="name" name="name"><br>
-            <label for="code">식별코드:</label><br>
-            <input type="text" id="code" name="code"><br>
-            <button id="submitBtn">제출</button>
-        </div>
-    </div>
-
-    <div id="userData" style="display:none;">
-        <h2 id="userName"></h2>
-        <div id="가군"><h3>가군</h3></div>
-        <div id="나군"><h3>나군</h3></div>
-        <div id="다군"><h3>다군</h3></div>
-    </div>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        function loadCsvData() {
-            return fetch('https://raw.githubusercontent.com/seanyjeong/maxilsan/main/silgiall.csv')
-                .then(response => response.text())
-                .then(data => {
-                    var rows = data.split('\n');
-                    var result = {};
-                    rows.forEach(function(row) {
-                        var cells = row.split(',');
-                        var 대학명 = cells[2];
-                        var 학과명 = cells[3];
-                        var 실기종목 = cells.slice(4, 10).filter(function(cell) { return cell !== ''; });
-                        result[대학명 + 학과명] = 실기종목;
-                    });
-                    return result;
-                })
-                .catch(error => console.error('Error:', error));
-        }
-
         $(document).ready(function(){
             $("#loginModal").show();
 
@@ -95,91 +49,38 @@
                     success: function(response) {
                         if(response != "failure") {
                             var data = JSON.parse(response);
-                            $("#userName").html(name + "님의 지원정보");
-
-                            var labels = ["대학명", "학과명", "수능점수", "내신점수"];
-                            var groups = ["가군", "나군", "다군"];
-
-                            loadCsvData().then(function(csvData) {
-     groups.forEach(function(group) {
-        // "대학명", "학과명", "수능점수", "내신점수"에 대한 테이블 생성
-        var table1 = document.createElement('table');
-        var thead1 = document.createElement('thead');
-        var tbody1 = document.createElement('tbody');
-
-        // "대학명", "학과명", "수능점수", "내신점수" 헤더 생성
-        var tr = document.createElement('tr');
-        labels.forEach(function(label) {
-            var th = document.createElement('th');
-            th.className = label;
-            th.textContent = label;
-            tr.appendChild(th);
-        });
-        thead1.appendChild(tr);
-
-        // "대학명", "학과명", "수능점수", "내신점수" 데이터 생성
-        var tr = document.createElement('tr');
-        labels.forEach(function(label) {
-            var td = document.createElement('td');
-            td.className = label;
-            td.textContent = data[group][label];
-            tr.appendChild(td);
-        });
-        tbody1.appendChild(tr);
-
-        // 생성된 헤더와 본문을 첫 번째 테이블에 추가
-        table1.appendChild(thead1);
-        table1.appendChild(tbody1);
-
-        $("#" + group).append(table1);
-
-        // "실기종목"에 대한 테이블 생성
-        var table2 = document.createElement('table');
-        var thead2 = document.createElement('thead');
-        var tbody2 = document.createElement('tbody');
-
-        // "실기종목" 헤더 생성
-        var 실기종목 = csvData[data[group]["대학명"] + data[group]["학과명"]];
-        var tr = document.createElement('tr');
-        실기종목.forEach(function(종목) {
-            if (종목.trim() !== '') {  // 실기종목이 공백이 아닌 경우에만 헤더를 생성
-                var th = document.createElement('th');
-                th.textContent = 종목;
-                th.style.fontWeight = 'normal';  // 글자를 굵게 하지 않음
-                tr.appendChild(th);
-            }
-        });
-        thead2.appendChild(tr);
-
-        // "실기종목" 입력칸 생성
-        var tr = document.createElement('tr');
-        실기종목.forEach(function(종목) {
-            if (종목.trim() !== '') {  // 실기종목이 공백이 아닌 경우에만 입력칸을 생성
-                var td = document.createElement('td');
-                var input = document.createElement('input');
-                input.type = 'text';
-                td.appendChild(input);
-                tr.appendChild(td);
-            }
-        });
-        tbody2.appendChild(tr);
-
-        // 생성된 헤더와 본문을 두 번째 테이블에 추가
-        table2.appendChild(thead2);
-        table2.appendChild(tbody2);
-
-        $("#" + group).append(table2);
-    });
-                                $("#loginModal").hide();
-                                $("#userData").show();
-                            });
+                            console.log(data);
+                            $("#loginModal").hide();
+                            $("#results").show();
                         } else {
-                            alert("로그인 실패");
+                            alert("로그인에 실패했습니다. 이름과 코드를 확인해주세요.");
                         }
                     }
                 });
             });
         });
     </script>
+</head>
+<body>
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span onclick="$('#loginModal').hide();">×</span>
+            <label for="name">이름:</label><br>
+            <input type="text" id="name" name="name"><br>
+            <label for="code">코드:</label><br>
+            <input type="text" id="code" name="code"><br>
+            <button id="submitBtn">로그인</button>
+        </div>
+    </div>
+
+    <div id="results" style="display:none;">
+        <img class="responsive" src="https://github.com/seanyjeong/maxilsan/blob/main/ilsanmax.png?raw=true" alt="타이틀 이미지">
+        <h2 style="text-align:center;">가군</h2>
+        <p>    <strong>수능  내신   실기   총점   합격가능성</strong></p>
+        <h2 style="text-align:center;">나군</h2>
+        <p>    <strong>수능  내신   실기   총점   합격가능성</strong></p>
+        <h2 style="text-align:center;">다군</h2>
+        <p>    <strong>수능  내신   실기   총점   합격가능성</strong></p>
+    </div>
 </body>
 </html>
