@@ -39,21 +39,6 @@
             width: 100%;
             height: auto;
         }
-
-        /* Additional styles */
-        #search-results th {
-            font-size: 14px;
-            text-align: center;
-            padding: 0;  /* 패딩 제거 */
-        }
-        #search-results td {
-            font-size: 11px;
-            text-align: center;
-            padding: 0;  /* 패딩 제거 */
-        }
-        #search-results table {
-            width: 100%;  /* 표의 가로 크기를 100%로 설정 */
-        }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
@@ -74,6 +59,14 @@
                             console.log(data);
                             $("#loginModal").hide();
                             $("#results").show();
+                            $("#username").text(data.name);
+                            var labels = ["대학명", "학과명", "수능점수", "내신점수"];
+                            var groups = ["가군", "나군", "다군"];
+                            for (var i = 0; i < groups.length; i++) {
+                                for (var j = 0; j < labels.length; j++) {
+                                    $("#" + groups[i] + "-" + labels[j]).text(data[groups[i]][labels[j]]);
+                                }
+                            }
                         } else {
                             alert("로그인에 실패했습니다. 이름과 코드를 확인해주세요.");
                         }
@@ -86,7 +79,7 @@
 <body>
     <div id="loginModal" class="modal">
         <div class="modal-content">
-            <span onclick="$('#loginModal').hide();">×</span>
+            <span onclick="$('#loginModal').hide();">&times;</span>
             <label for="name">이름:</label><br>
             <input type="text" id="name" name="name"><br>
             <label for="code">코드:</label><br>
@@ -95,13 +88,48 @@
         </div>
     </div>
 
-    <div id="results" style="display:none;">
-        <img class="responsive" src="https://github.com/seanyjeong/maxilsan/blob/main/ilsanmax.png?raw=true" alt="타이틀 이미지">
-        <h2 style="text-align:center;">가군</h2>
-        <p style="text-align:center;"><strong>수능  내신   실기   총점   합격가능성</strong></p>
+<div id="results" style="display:none;">
+    <img class="responsive" src="https://github.com/seanyjeong/maxilsan/blob/main/ilsanmax.png?raw=true" alt="타이틀 이미지">
+    <h2 style="text-align:center;">가군</h2>
+    <div style="text-align: center;">
+        <span id="가군-대학명" style="display: inline-block;"></span>
+        <span id="가군-학과명" style="display: inline-block;"></span>
+    </div>
+    <div style="display: flex; justify-content: space-around;">
+        <div>
+            <p style="text-align:center;"><strong>수능</strong></p>
+            <p id="가군-수능점수" style="text-align:center;"></p>
+        </div>
+        <div>
+            <p style="text-align:center;"><strong>내신</strong></p>
+            <p id="가군-내신점수" style="text-align:center;"></p>
+        </div>
+        <div>
+            <p style="text-align:center;"><strong>실기</strong></p>
+            <p id="가군-실기점수" style="text-align:center;"></p>
+        </div>
+        <div>
+            <p style="text-align:center;"><strong>총점</strong></p>
+            <p id="가군-총점" style="text-align:center;"></p>
+        </div>
+        <div>
+            <p style="text-align:center;"><strong>합격가능성</strong></p>
+            <p id="가군-합격가능성" style="text-align:center;"></p>
+        </div>
+    </div>
+
         <h2 style="text-align:center;">나군</h2>
+<div style="text-align: center;">
+    <span id="나군-대학명" style="display: inline-block;"></span>
+    <span id="나군-학과명" style="display: inline-block;"></span>
+</div>
         <p style="text-align:center;"><strong>수능  내신   실기   총점   합격가능성</strong></p>
+
         <h2 style="text-align:center;">다군</h2>
+<div style="text-align: center;">
+    <span id="다군-대학명" style="display: inline-block;"></span>
+    <span id="다군-학과명" style="display: inline-block;"></span>
+</div>
         <p style="text-align:center;"><strong>수능  내신   실기   총점   합격가능성</strong></p>
     </div>
 </body>
