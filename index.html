@@ -34,11 +34,13 @@
             width: 80%;
         }
 
-        /* 이미지 스타일 */
-        .responsive {
-            width: 100%;
-            height: auto;
-        }
+/* 타이틀 이미지 스타일 */
+.responsive {
+    position: fixed; /* 추가된 코드 */
+    top: 0; /* 추가된 코드 */
+    width: 100%;
+    height: auto;
+}
 
 /* 가군, 나군, 다군 섹션 스타일 */
 #가군-실기종목, #나군-실기종목, #다군-실기종목 {
@@ -260,7 +262,7 @@ table.append(row2); // 두 번째 행을 테이블에 추가
 </div>
 <!-- "저장하기" 버튼 -->
 <div style="text-align: center;">
-    <button id="saveBtn" style="margin-top: 3em; padding: 15px 30px; font-size: 20px;">저장하기</button>
+    <button id="saveBtn" style="margin-top: 3em; margin-bottom: 3em; padding: 15px 30px; font-size: 20px;">저장하기</button>
 </div>
 </body>
 
