@@ -40,10 +40,24 @@
             height: auto;
         }
 
-        /* 모바일 화면에서의 스타일 */
-        @media screen and (max-width: 600px) {
-            /* 여기에 모바일 화면에서 적용할 스타일을 추가하세요. */
-        }
+/* 가군, 나군, 다군 섹션 스타일 */
+#가군-실기종목, #나군-실기종목, #다군-실기종목 {
+    display: flex; /* 변경된 코드 */
+    justify-content: center; /* 추가된 코드 */
+    font-size: 1.25em;
+    font-weight: bold;
+    margin-right: 1em;
+    width: 100%; /* 섹션의 너비를 100%로 설정 */
+    overflow: auto; /* 추가된 코드 */
+}
+
+/* 모바일 화면에서의 스타일 */
+@media screen and (max-width: 600px) {
+    /* 여기에 모바일 화면에서 적용할 스타일을 추가하세요. */
+    #가군-실기종목, #나군-실기종목, #다군-실기종목 {
+        width: 100%; /* 섹션의 너비를 100%로 설정 */
+    }
+}
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
