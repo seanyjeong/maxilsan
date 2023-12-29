@@ -67,7 +67,7 @@
                             $("#username").text(data.name + " 학생의 대학정보"); // 사용자 이름 설정
 
 
-                            var labels = ["대학명", "학과명", "수능점수", "내신점수","실기종목"];
+                            var labels = ["대학명", "학과명", "수능점수", "내신점수"];
                             var groups = ["가군", "나군", "다군"];
                             for (var i = 0; i < groups.length; i++) {
 var totalScore = 0;
@@ -80,7 +80,7 @@ for (var j = 0; j < labels.length; j++) {
     }
 }
 $("#" + groups[i] + "-총점").text(totalScore); // 총점 계산 및 표시
-var 실기종목들 = data[groups[i]]["실기종목"].split("  "); // 실기 종목들 찾기
+var 실기종목들 = data[groups[i]]["실기종목"].split(", "); // 실기 종목들 찾기
 var 실기종목Container = $("#" + groups[i] + "-실기종목");
 실기종목Container.empty(); // 기존의 실기 종목과 입력 칸 제거
 
@@ -89,8 +89,10 @@ var row1 = $('<tr>'); // 첫 번째 행 생성
 var row2 = $('<tr>'); // 두 번째 행 생성
 
 실기종목들.forEach(function(실기종목) {
-    row1.append('<td>' + 실기종목 + '</td>'); // 실기 종목 추가
-    row2.append('<td><input type="text"></td>'); // 입력 칸 추가
+    if (실기종목.trim() !== "") { // 실기 종목이 비어 있지 않은 경우에만 추가
+        row1.append('<td style="color: red;">' + 실기종목 + '</td>'); // 실기 종목 추가, 빨간색으로 표시
+        row2.append('<td><input type="text"></td>'); // 입력 칸 추가
+    }
 });
 
 table.append(row1); // 첫 번째 행을 테이블에 추가
