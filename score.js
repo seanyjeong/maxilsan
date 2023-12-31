@@ -2,6 +2,7 @@
 // HTML 파일에 다음 두 줄을 추가하세요.
 // <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 // <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+console.log('score.js 파일이 로드되었습니다.');
 
 let silgiallData;
 let silgiData;
