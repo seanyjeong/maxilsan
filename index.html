@@ -84,7 +84,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
 
-    <script>
+   
+<script>
 $(document).ready(function(){
     $("#loginModal").show();
 
@@ -133,13 +134,37 @@ $(document).ready(function(){
                         실기종목들.forEach(function(실기종목, index) {
                             if (실기종목.trim() !== "") { // 실기 종목이 비어 있지 않은 경우에만 추가
                                 row1.append('<td style="color: red;">' + 실기종목 + '</td>'); // 실기 종목 추가, 빨간색으로 표시
-                                var input = $('<input type="text" data-group="' + 실기종목 + '">'); // 입력 칸 추가
+                                var input = $('<input type="text" data-group="' + groups[i] + '">'); // 입력 칸 추가
                                 input.on('change', async function() {
-                                    // 입력값이 변경되면, 점수를 계산합니다.
-                                    var value = $(this).val();
-                                    var score = await calculateScore(groupData["대학명"], groupData["학과명"], value, data.gender, index);
-                                    $(this).next().text(score);
-                                });
+    // 입력값이 변경되면, 점수를 계산합니다.
+    var value = $(this).val();
+    var group = $(this).data('group');
+    var groupData = data[group];
+    var score = await calculateScore(groupData["대학명"], groupData["학과명"], value, data.gender, index, groupData["행들"]);
+    $(this).next().text(score);
+
+    // 실기 점수의 합계를 계산하고 업데이트합니다.
+    var totalScore = 0;
+    $("#" + group + "-실기종목 span").each(function() {
+        var score = parseFloat($(this).text());
+        if (!isNaN(score)) {
+            totalScore += score;
+        }
+    });
+    $("#" + group + "-실기총점").text(totalScore.toFixed(2));
+
+    // 기존 총점과 실기 총점을 합산하여 새로운 총점을 계산하고 업데이트합니다.
+    var originalTotalScore = 0;
+    labels.forEach(function(label) {
+        var score = parseFloat($("#" + group + "-" + label).text());
+        if (!isNaN(score)) {
+            originalTotalScore += score;
+        }
+    });
+    var newTotalScore = originalTotalScore + totalScore;
+    $("#" + group + "-총점").text(newTotalScore.toFixed(2));
+});
+
                                 row2.append($('<td>').append(input).append('<span>'));
                             }
                         });
@@ -155,39 +180,15 @@ $(document).ready(function(){
         });
     });
 });
-async function calculateScore(대학명, 학과명, value, gender, inputIndex) {
-    // CSV 파일을 불러옵니다.
-    var response = await fetch('https://raw.githubusercontent.com/seanyjeong/maxilsan/main/silgiall.csv');
-    var csvData = await response.text();
-    var data = Papa.parse(csvData, {header: false}).data;
 
-    // 대학명과 학과명이 일치하는 행을 찾습니다.
-    var row = data.find(function(row) {
-        return row[2] === 대학명 && row[3] === 학과명;  // 세번째와 네번째 열이 대학명과 학과명입니다.
-    });
-
-    if (!row) {
-        // 일치하는 행이 없으면 0을 반환합니다.
-        return 0;
-    }
-
-    // 코드번호를 기억합니다.
-    var code = row[0];  // 첫번째 열이 코드번호입니다.
-
-    // 다른 CSV 파일을 불러옵니다.
-    response = await fetch('https://raw.githubusercontent.com/seanyjeong/maxilsan/main/silgi.csv');
-    csvData = await response.text();
-    data = Papa.parse(csvData, {header: false}).data;
-
-    // 코드번호가 일치하는 모든 행을 찾습니다.
-    var rows = data.filter(function(row) {
-        return row[0] === code;  // 첫번째 열이 코드번호입니다.
-    });
-
+async function calculateScore(대학명, 학과명, value, gender, inputIndex, 행들) {
     // 입력값에 해당하는 점수를 찾습니다.
-    var lookupRange = (gender === '남' ? rows[inputIndex * 3].slice(3) : rows[inputIndex * 3 + 2].slice(3)).filter(value => !isNaN(value) && value !== '');
-    var resultRange = rows[inputIndex * 3 + 1].slice(3);
+    var lookupRange = (gender === '남' ? 행들[inputIndex * 3].slice(3) : 행들[inputIndex * 3 + 2].slice(3)).filter(value => value !== '');
+    var resultRange = 행들[inputIndex * 3 + 1].slice(3).filter(value => value !== '');;
     var closestIndex = lookupRange.findIndex(curr => curr == value);
+
+    console.log(lookupRange)
+    console.log(행들);
     
     if (closestIndex === -1) {
         closestIndex = lookupRange.reduce((prev, curr, index) => {
@@ -195,7 +196,7 @@ async function calculateScore(대학명, 학과명, value, gender, inputIndex) {
         }, -1);
     }
     
-    return resultRange[closestIndex];
+    return parseFloat(resultRange[closestIndex]).toFixed(2);
 }
 
 
@@ -203,9 +204,16 @@ async function calculateScore(대학명, 학과명, value, gender, inputIndex) {
 
 
 
+</script>
 
 
-    </script>
+
+
+
+
+
+
+ 
 </head>
 <body>
     <div id="loginModal" class="modal">
@@ -251,7 +259,7 @@ async function calculateScore(대학명, 학과명, value, gender, inputIndex) {
             </div>
             <div>
                 <p style="text-align:center;"><strong>실기</strong></p>
-                <p id="가군-실기점수" style="text-align:center;"></p>
+                <p id="가군-실기총점" style="text-align:center;"></p>
             </div>
             <div>
                 <p style="text-align:center;"><strong>총점</strong></p>
@@ -283,7 +291,7 @@ async function calculateScore(대학명, 학과명, value, gender, inputIndex) {
         </div>
         <div>
             <p style="text-align:center;"><strong>실기</strong></p>
-            <p id="나군-실기점수" style="text-align:center;"></p>
+            <p id="나군-실기총점" style="text-align:center;"></p>
         </div>
         <div>
             <p style="text-align:center;"><strong>총점</strong></p>
@@ -314,7 +322,7 @@ async function calculateScore(대학명, 학과명, value, gender, inputIndex) {
         </div>
         <div>
             <p style="text-align:center;"><strong>실기</strong></p>
-            <p id="다군-실기점수" style="text-align:center;"></p>
+            <p id="다군-실기총점" style="text-align:center;"></p>
         </div>
         <div>
             <p style="text-align:center;"><strong>총점</strong></p>
