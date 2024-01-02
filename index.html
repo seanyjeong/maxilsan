@@ -27,11 +27,14 @@
 
         /* 모달창 내용 스타일 */
         .modal-content {
-            background-color: #fefefe;
+            background-color: #e4caca;
             margin: auto;
             padding: 20px;
             border: 1px solid #888;
-            width: 80%;
+            width: 30%;
+            display: flex; /* 추가된 코드 */
+            flex-direction: column; /* 추가된 코드 */
+            align-items: center; /* 추가된 코드 */
         }
 
 /* 타이틀 이미지 스타일 */
@@ -136,34 +139,48 @@ $(document).ready(function(){
                                 row1.append('<td style="color: red;">' + 실기종목 + '</td>'); // 실기 종목 추가, 빨간색으로 표시
                                 var input = $('<input type="text" data-group="' + groups[i] + '">'); // 입력 칸 추가
                                 input.on('change', async function() {
-    // 입력값이 변경되면, 점수를 계산합니다.
-    var value = $(this).val();
-    var group = $(this).data('group');
-    var groupData = data[group];
-    var score = await calculateScore(groupData["대학명"], groupData["학과명"], value, data.gender, index, groupData["행들"]);
-    $(this).next().text(score);
+                                    // 입력값이 변경되면, 점수를 계산합니다.
+                                    var value = $(this).val();
+                                    var group = $(this).data('group');
+                                    var groupData = data[group];
+                                    var score = await calculateScore(groupData["대학명"], groupData["학과명"], value, data.gender, index, groupData["행들"]);
+                                    $(this).next().text(score);
 
-    // 실기 점수의 합계를 계산하고 업데이트합니다.
-    var totalScore = 0;
-    $("#" + group + "-실기종목 span").each(function() {
-        var score = parseFloat($(this).text());
-        if (!isNaN(score)) {
-            totalScore += score;
-        }
-    });
-    $("#" + group + "-실기총점").text(totalScore.toFixed(2));
+                                    // 실기 점수의 합계를 계산하고 업데이트합니다.
+                                    var totalScore = 0;
+                                    $("#" + group + "-실기종목 span").each(function() {
+                                        var score = parseFloat($(this).text());
+                                        if (!isNaN(score)) {
+                                            totalScore += score;
+                                        }
+                                    });
+                                    $("#" + group + "-실기총점").text(totalScore.toFixed(2));
 
-    // 기존 총점과 실기 총점을 합산하여 새로운 총점을 계산하고 업데이트합니다.
-    var originalTotalScore = 0;
-    labels.forEach(function(label) {
-        var score = parseFloat($("#" + group + "-" + label).text());
-        if (!isNaN(score)) {
-            originalTotalScore += score;
-        }
-    });
-    var newTotalScore = originalTotalScore + totalScore;
-    $("#" + group + "-총점").text(newTotalScore.toFixed(2));
-});
+                                    // 기존 총점과 실기 총점을 합산하여 새로운 총점을 계산하고 업데이트합니다.
+                                    var originalTotalScore = 0;
+                                    labels.forEach(function(label) {
+                                        var score = parseFloat($("#" + group + "-" + label).text());
+                                        if (!isNaN(score)) {
+                                            originalTotalScore += score;
+                                        }
+                                    });
+                                    var newTotalScore = originalTotalScore + totalScore;
+                                    $("#" + group + "-총점").text(newTotalScore.toFixed(2));
+
+                                    // cutData를 가져와서 총점과 비교하여 합격 가능성을 계산하고 업데이트합니다.
+                                    var cutData = parseFloat(groupData["cutData"]);
+if (isNaN(cutData)) {
+  // cutData가 숫자로 변환할 수 없는 경우에 대한 처리
+  if (groupData["cutData"] === undefined || groupData["cutData"] === "") {
+    console.log("cutData is undefined or empty");
+  } else {
+    console.log("cutData is not a number: " + groupData["cutData"]);
+  }
+} else {
+  var passPossibility = calculatePassPossibility(newTotalScore, cutData);
+  $("#" + group + "-합격가능성").text(passPossibility + "%");
+}
+                                });
 
                                 row2.append($('<td>').append(input).append('<span>'));
                             }
@@ -181,6 +198,26 @@ $(document).ready(function(){
     });
 });
 
+function calculatePassPossibility(totalScore, cutData) {
+  var possibility = 70; // 기본 합격 가능성은 60%
+  var difference = totalScore - cutData; // 총점과 cutData의 차이 계산
+
+  if (difference < 0) {
+    // 총점이 cutData보다 작으면, 차이 * 2만큼 합격 가능성을 깎아냅니다.
+    possibility -= Math.abs(difference) * 1.5;
+  } else if (difference > 0) {
+    // 총점이 cutData보다 크면, 차이 * 2만큼 합격 가능성을 높입니다.
+    possibility += difference * 1.5;
+  }
+
+  // 합격 가능성이 0% 미만이면 0%로, 100% 초과이면 100%로 제한합니다.
+  possibility = Math.max(0, Math.min(100, possibility));
+
+  // 소수점 첫째 자리까지 표시합니다.
+  return possibility.toFixed(1);
+}
+
+
 async function calculateScore(대학명, 학과명, value, gender, inputIndex, 행들) {
     value = Number(value);
 
@@ -188,14 +225,14 @@ async function calculateScore(대학명, 학과명, value, gender, inputIndex, �
     var resultRange = 행들[inputIndex * 3 + 1].slice(3).filter(value => value !== '');;
     var exactMatchIndex = lookupRange.indexOf(value);
 
-console.log(lookupRange);
-console.log(resultRange);
+    console.log(lookupRange);
+    console.log(resultRange);
     
     if (exactMatchIndex !== -1) {
         return parseFloat(resultRange[exactMatchIndex]).toFixed(2);
     }
 
-    var closestIndex = lookupRange.findIndex(curr => curr >= value);
+    var closestIndex = lookupRange.findIndex(curr => curr > value);
 
     if (closestIndex === -1) {
         return parseFloat(resultRange[resultRange.length - 1]).toFixed(2);
@@ -205,6 +242,7 @@ console.log(resultRange);
         return parseFloat(resultRange[closestIndex - 1]).toFixed(2);
     }
 }
+
 
 
 
