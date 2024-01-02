@@ -388,6 +388,65 @@ async function calculateScore(대학명, 학과명, value, gender, inputIndex, �
     <button id="saveBtn" style="margin-top: 3em; margin-bottom: 3em; padding: 15px 30px; font-size: 20px;">저장하기</button>
 </div>
 </body>
+<script>
+$("#saveBtn").click(function(){
+    console.log("Button clicked.");
+    var data = {
+        name: $("#name").val(),
+        date: new Date(),
+        가군: {
+            대학명: $("#가군-대학명").text(),
+            학과명: $("#가군-학과명").text(),
+            수능점수: $("#가군-수능점수").text(),
+            내신점수: $("#가군-내신점수").text(),
+            실기점수: $("#가군-실기총점").text(),
+            총점: $("#가군-총점").text(),
+            실기종목: $("#가군-실기종목 input").map(function(){ return this.value; }).get()
+        },
+        나군: {
+            대학명: $("#가군-대학명").text(),
+            학과명: $("#나군-학과명").text(),
+            수능점수: $("#나군-수능점수").text(),
+            내신점수: $("#나군-내신점수").text(),
+            실기점수: $("#나군-실기총점").text(),
+            총점: $("#나군-총점").text(),
+            실기종목: $("#나군-실기종목 input").map(function(){ return this.value; }).get()
+        },
+        다군: {
+            대학명: $("#다군-대학명").text(),
+            학과명: $("#다군-학과명").text(),
+            수능점수: $("#다군-수능점수").text(),
+            내신점수: $("#다군-내신점수").text(),
+            실기점수: $("#다군-실기총점").text(),
+            총점: $("#다군-총점").text(),
+            실기종목: $("#다군-실기종목 input").map(function(){ return this.value; }).get()
+        }
+    };
+    console.log("Sending data:", data); // 데이터를 콘솔에 출력합니다.
+
+    $.ajax({
+        url: "https://ua8vob4nc9.execute-api.ap-southeast-2.amazonaws.com/sendData",
+        type: "post",
+        data: JSON.stringify(data),
+        contentType: "application/json",
+
+        success: function(response) {
+            alert("데이터가 성공적으로 저장되었습니다.");
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log("Error:", textStatus, errorThrown);
+            console.log("Response text:", jqXHR.responseText);
+            console.log("Status code:", jqXHR.status);
+            if (jqXHR.status === 0 && textStatus === "error") {
+                console.log("A CORS issue may have occurred.");
+            }
+        }
+    });
+
+});
+
+
+</script>
 
 
 </html>
