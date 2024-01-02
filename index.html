@@ -182,22 +182,31 @@ $(document).ready(function(){
 });
 
 async function calculateScore(대학명, 학과명, value, gender, inputIndex, 행들) {
-    // 입력값에 해당하는 점수를 찾습니다.
+    value = Number(value);
+
     var lookupRange = (gender === '남' ? 행들[inputIndex * 3].slice(3) : 행들[inputIndex * 3 + 2].slice(3)).filter(value => value !== '');
     var resultRange = 행들[inputIndex * 3 + 1].slice(3).filter(value => value !== '');;
-    var closestIndex = lookupRange.findIndex(curr => curr == value);
+    var exactMatchIndex = lookupRange.indexOf(value);
 
-    console.log(lookupRange)
-    console.log(행들);
+console.log(lookupRange);
+console.log(resultRange);
     
-    if (closestIndex === -1) {
-        closestIndex = lookupRange.reduce((prev, curr, index) => {
-            return (Math.abs(curr - value) < Math.abs(lookupRange[prev] - value) || (curr == value)) ? index : prev;
-        }, -1);
+    if (exactMatchIndex !== -1) {
+        return parseFloat(resultRange[exactMatchIndex]).toFixed(2);
     }
-    
-    return parseFloat(resultRange[closestIndex]).toFixed(2);
+
+    var closestIndex = lookupRange.findIndex(curr => curr >= value);
+
+    if (closestIndex === -1) {
+        return parseFloat(resultRange[resultRange.length - 1]).toFixed(2);
+    } else if (closestIndex === 0) {
+        return parseFloat(resultRange[closestIndex]).toFixed(2);
+    } else {
+        return parseFloat(resultRange[closestIndex - 1]).toFixed(2);
+    }
 }
+
+
 
 
 
