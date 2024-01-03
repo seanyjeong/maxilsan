@@ -391,6 +391,11 @@ async function calculateScore(대학명, 학과명, value, gender, inputIndex, �
 <script>
 $("#saveBtn").click(function(){
     console.log("Button clicked.");
+
+    var 가군_실기종목 = $("#가군-실기종목 input").map(function(){ return { name: $(this).siblings(".종목이름").text(), record: this.value  }; }).get();
+    var 나군_실기종목 = $("#나군-실기종목 input").map(function(){ return { name: $(this).siblings(".종목이름").text(), record: this.value  }; }).get();
+    var 다군_실기종목 = $("#다군-실기종목 input").map(function(){ return { name: $(this).siblings(".종목이름").text(), record: this.value  }; }).get();
+
     var data = {
         name: $("#name").val(),
         date: new Date(),
@@ -401,16 +406,16 @@ $("#saveBtn").click(function(){
             내신점수: $("#가군-내신점수").text(),
             실기점수: $("#가군-실기총점").text(),
             총점: $("#가군-총점").text(),
-            실기종목: $("#가군-실기종목 input").map(function(){ return this.value; }).get()
+            실기종목: 가군_실기종목
         },
         나군: {
-            대학명: $("#가군-대학명").text(),
+            대학명: $("#나군-대학명").text(),
             학과명: $("#나군-학과명").text(),
             수능점수: $("#나군-수능점수").text(),
             내신점수: $("#나군-내신점수").text(),
             실기점수: $("#나군-실기총점").text(),
             총점: $("#나군-총점").text(),
-            실기종목: $("#나군-실기종목 input").map(function(){ return this.value; }).get()
+            실기종목: 나군_실기종목
         },
         다군: {
             대학명: $("#다군-대학명").text(),
@@ -419,13 +424,14 @@ $("#saveBtn").click(function(){
             내신점수: $("#다군-내신점수").text(),
             실기점수: $("#다군-실기총점").text(),
             총점: $("#다군-총점").text(),
-            실기종목: $("#다군-실기종목 input").map(function(){ return this.value; }).get()
+            실기종목: 다군_실기종목
         }
     };
-    console.log("Sending data:", data); // 데이터를 콘솔에 출력합니다.
+
+    console.log("Sending data:", data);
 
     $.ajax({
-        url: "https://ua8vob4nc9.execute-api.ap-southeast-2.amazonaws.com/sendData",
+        url: "https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbyE8BxFukVJld8LP2N8hEhY1_x6hrX4bqfjvMBdGz8F4kWr4HrysfItRxjhIZVX7ovv/exec?",
         type: "post",
         data: JSON.stringify(data),
         contentType: "application/json",
@@ -442,7 +448,6 @@ $("#saveBtn").click(function(){
             }
         }
     });
-
 });
 
 
