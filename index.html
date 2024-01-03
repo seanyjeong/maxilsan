@@ -136,7 +136,8 @@ $(document).ready(function(){
 
                         실기종목들.forEach(function(실기종목, index) {
                             if (실기종목.trim() !== "") { // 실기 종목이 비어 있지 않은 경우에만 추가
-                                row1.append('<td style="color: red;">' + 실기종목 + '</td>'); // 실기 종목 추가, 빨간색으로 표시
+                                // 실기 종목 추가, 빨간색으로 표시
+                                row1.append('<td class="skill-name" style="color: red;">' + 실기종목 + '</td>');
                                 var input = $('<input type="text" data-group="' + groups[i] + '">'); // 입력 칸 추가
                                 input.on('change', async function() {
                                     // 입력값이 변경되면, 점수를 계산합니다.
@@ -289,7 +290,7 @@ async function calculateScore(대학명, 학과명, value, gender, inputIndex, �
     <div id="results" style="display:none;">
         <img class="responsive" src="https://github.com/seanyjeong/maxilsan/blob/main/ilsanmax.png?raw=true" alt="타이틀 이미지">
             <h2 id="username" style="text-align:center;"></h2> <!-- 사용자 이름을 표시하는 요소 -->
-            <h3 style="text-align:center;">!매일 실기입력해라!</h3> <!-- 제목 추가 -->
+            <h3 style="text-align:center;">오늘 실기 입력하고, 합격가능성 보셈</h3> <!-- 제목 추가 -->
         <h2 style="text-align:center;">가군</h2>
         <div style="text-align: center;">
             <span id="가군-대학명" style="display: inline-block; font-size: 20px; font-weight: bold; margin-right: 20px;"></span>
@@ -392,10 +393,12 @@ async function calculateScore(대학명, 학과명, value, gender, inputIndex, �
 $("#saveBtn").click(function(){
     console.log("Button clicked.");
 
-    var 가군_실기종목 = $("#가군-실기종목 input").map(function(){ return { name: $(this).siblings(".종목이름").text(), record: this.value  }; }).get();
-    var 나군_실기종목 = $("#나군-실기종목 input").map(function(){ return { name: $(this).siblings(".종목이름").text(), record: this.value  }; }).get();
-    var 다군_실기종목 = $("#다군-실기종목 input").map(function(){ return { name: $(this).siblings(".종목이름").text(), record: this.value  }; }).get();
-
+    var 가군_실기종목이름 = $("#가군-실기종목 td.skill-name").map(function(){ return $(this).text(); }).get();
+    var 가군_실기종목기록점수 = $("#가군-실기종목 input").map(function(){ return { record: this.value, score: $(this).next().text() }; }).get();
+    var 나군_실기종목이름 = $("#나군-실기종목 td.skill-name").map(function(){ return $(this).text(); }).get();
+    var 나군_실기종목기록점수 = $("#나군-실기종목 input").map(function(){ return { record: this.value, score: $(this).next().text() }; }).get();
+    var 다군_실기종목이름 = $("#다군-실기종목 td.skill-name").map(function(){ return $(this).text(); }).get();
+    var 다군_실기종목기록점수 = $("#다군-실기종목 input").map(function(){ return { record: this.value, score: $(this).next().text() }; }).get();
     var data = {
         name: $("#name").val(),
         date: new Date(),
@@ -406,7 +409,10 @@ $("#saveBtn").click(function(){
             내신점수: $("#가군-내신점수").text(),
             실기점수: $("#가군-실기총점").text(),
             총점: $("#가군-총점").text(),
-            실기종목: 가군_실기종목
+            합격가능성: $("#가군-합격가능성").text(),
+            실기종목이름: 가군_실기종목이름,
+            실기종목기록점수:가군_실기종목기록점수,
+            
         },
         나군: {
             대학명: $("#나군-대학명").text(),
@@ -415,7 +421,9 @@ $("#saveBtn").click(function(){
             내신점수: $("#나군-내신점수").text(),
             실기점수: $("#나군-실기총점").text(),
             총점: $("#나군-총점").text(),
-            실기종목: 나군_실기종목
+            합격가능성: $("#나군-합격가능성").text(),
+            실기종목이름: 나군_실기종목이름,
+            실기종목기록점수:나군_실기종목기록점수
         },
         다군: {
             대학명: $("#다군-대학명").text(),
@@ -424,7 +432,9 @@ $("#saveBtn").click(function(){
             내신점수: $("#다군-내신점수").text(),
             실기점수: $("#다군-실기총점").text(),
             총점: $("#다군-총점").text(),
-            실기종목: 다군_실기종목
+            합격가능성: $("#다군-합격가능성").text(),
+            실기종목이름: 다군_실기종목이름,
+            실기종목기록점수:다군_실기종목기록점수
         }
     };
 
