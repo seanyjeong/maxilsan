@@ -12,30 +12,42 @@
 
         /* 모달창 스타일 */
         .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1; 
-            padding-top: 100px; 
-            left: 0;
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgb(0,0,0); 
-            background-color: rgba(0,0,0,0.4); 
-        }
+    display: none; /* 모달 숨김 */
+    position: fixed; /* 고정 위치 */
+    z-index: 1; /* 다른 요소 위에 표시되도록 설정 */
+    padding-top: 100px; /* 위에서부터의 여백 */
+    left: 0; /* 왼쪽 정렬 */
+    top: 0; /* 위쪽 정렬 */
+    width: 100%; /* 전체 너비 */
+    height: 100%; /* 전체 높이 */
+    overflow: auto; /* 스크롤이 필요한 경우 스크롤 가능하도록 설정 */
+    /* background-color: rgb(0,0,0); */ /* 배경 색상 설정 (이 부분 주석 처리) */
+    background-image: url('https://github.com/seanyjeong/maxilsan/blob/main/modalimg.png?raw=true'); /* 배경 이미지 설정 */
+    background-size: cover; /* 배경 이미지 크기 조절 (선택 사항) */
+    background-position: center; /* 배경 이미지 위치 조절 (선택 사항) */
+    background-repeat: no-repeat; /* 배경 이미지 반복 방지 (선택 사항) */
+    background-color: rgba(0, 0, 0, 0.4); /* 대체 배경 색상 및 투명도 설정 */
+}
 
         /* 모달창 내용 스타일 */
-        .modal-content {
-            background-color: #e4caca;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 30%;
-            display: flex; /* 추가된 코드 */
-            flex-direction: column; /* 추가된 코드 */
-            align-items: center; /* 추가된 코드 */
-        }
+/* 모달 내용 스타일 */
+.modal-content {
+    background-color: #e4caca;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10em; /* 내용을 위로 올림 (조절 가능) */
+}
+
+/* 입력 창 스타일 */
+#name, #code {
+    width: 60%; /* 입력 창 너비를 50%로 설정 */
+}
+
 
 /* 타이틀 이미지 스타일 */
 .responsive {
@@ -388,6 +400,11 @@ async function calculateScore(대학명, 학과명, value, gender, inputIndex, �
 <div style="text-align: center;">
     <button id="saveBtn" style="margin-top: 3em; margin-bottom: 3em; padding: 15px 30px; font-size: 20px;">저장하기</button>
 </div>
+<style>
+    #saveBtn:active {
+        background-color: #7db9e8; /* 클릭 시 색상 */
+    }
+</style>
 </body>
 <script>
 $("#saveBtn").click(function(){
