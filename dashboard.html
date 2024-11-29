@@ -77,69 +77,75 @@
             document.getElementById('welcome-message').textContent = `${name} 환영합니다!`;
 
             // 점수 가져오기
-            const response = await fetch('https://supermax.kr/25getStudentScores', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name })
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                const data = result.data;
-                const scoreTablesDiv = document.getElementById('score-tables');
-
-                data.forEach(row => {
-                    const table = document.createElement('table');
-                    table.border = 1;
-
-                    const caption = document.createElement('caption');
-                    caption.textContent = `${row.군} (${row.대학명} - ${row.학과명})`;
-                    table.appendChild(caption);
-
-                    const tbody = document.createElement('tbody');
-                    tbody.innerHTML = `
-                        <tr>
-                            <th>수능점수</th>
-                            <th>내신점수</th>
-                            <th>실기점수</th>
-                            <th>총점</th>
-                        </tr>
-                        <tr>
-                            <td>${row.수능점수}</td>
-                            <td>${row.내신점수}</td>
-                            <td id="${row.군}-실기점수">0</td>
-                            <td id="${row.군}-총점">-</td>
-                        </tr>
-                    `;
-
-                    // 실기 종목 행 추가
-                    for (let i = 1; i <= 6; i++) {
-                        const 종목이름 = row[`실기종목${i}`];
-                        if (종목이름) {
-                            const recordRow = document.createElement('tr');
-                            recordRow.innerHTML = `
-                                <td colspan="2">${종목이름}</td>
-                                <td>
-                                    <input 
-                                        type="text" 
-                                        placeholder="기록 입력" 
-                                        id="${row.군}-종목${i}-기록" 
-                                        data-군="${row.군}" 
-                                        data-종목="${i}"
-                                    >
-                                </td>
-                                <td id="${row.군}-종목${i}-점수">-</td>
-                            `;
-                            tbody.appendChild(recordRow);
-                        }
-                    }
-
-                    table.appendChild(tbody);
-                    scoreTablesDiv.appendChild(table);
+            try {
+                const response = await fetch('https://supermax.kr/25getStudentScores', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
                 });
-            } else {
-                alert('점수를 불러오는 데 실패했습니다.');
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const data = result.data;
+                    const scoreTablesDiv = document.getElementById('score-tables');
+
+                    // 데이터를 순회하여 테이블 생성
+                    data.forEach(row => {
+                        const table = document.createElement('table');
+                        table.border = 1;
+
+                        const caption = document.createElement('caption');
+                        caption.textContent = `${row.군} (${row.대학명} - ${row.학과명})`;
+                        table.appendChild(caption);
+
+                        const tbody = document.createElement('tbody');
+                        tbody.innerHTML = `
+                            <tr>
+                                <th>수능점수</th>
+                                <th>내신점수</th>
+                                <th>실기점수</th>
+                                <th>총점</th>
+                            </tr>
+                            <tr>
+                                <td>${row.수능점수}</td>
+                                <td>${row.내신점수}</td>
+                                <td id="${row.군}-실기점수">0</td>
+                                <td id="${row.군}-총점">-</td>
+                            </tr>
+                        `;
+
+                        // 실기 종목 행 추가
+                        for (let i = 1; i <= 6; i++) {
+                            const 종목이름 = row[`실기종목${i}`];
+                            if (종목이름) {
+                                const recordRow = document.createElement('tr');
+                                recordRow.innerHTML = `
+                                    <td colspan="2">${종목이름}</td>
+                                    <td>
+                                        <input 
+                                            type="text" 
+                                            placeholder="기록 입력" 
+                                            id="${row.군}-종목${i}-기록" 
+                                            data-군="${row.군}" 
+                                            data-종목="${i}"
+                                        >
+                                    </td>
+                                    <td id="${row.군}-종목${i}-점수">-</td>
+                                `;
+                                tbody.appendChild(recordRow);
+                            }
+                        }
+
+                        table.appendChild(tbody);
+                        scoreTablesDiv.appendChild(table);
+                    });
+                } else {
+                    alert('점수를 불러오는 데 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('Error fetching student scores:', error);
+                alert('데이터를 불러오는 중 오류가 발생했습니다.');
             }
         });
 
