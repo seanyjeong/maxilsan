@@ -97,7 +97,7 @@
                         scoreTable.border = 1;
 
                         const scoreCaption = document.createElement('caption');
-                        scoreCaption.textContent = `${row.군} (${row.대학명} - ${row.학과명}) 점수`;
+                        scoreCaption.textContent = `${row.군} (${row.대학명} - ${row.학과명})`;
                         scoreTable.appendChild(scoreCaption);
 
                         const scoreTbody = document.createElement('tbody');
@@ -109,10 +109,10 @@
                                 <th>총점</th>
                             </tr>
                             <tr>
-                                <td>${row.수능점수}</td>
-                                <td>${row.내신점수}</td>
-                                <td id="${row.군}-실기점수">0</td>
-                                <td id="${row.군}-총점">-</td>
+                                <td>${row.수능점수 || ''}</td>
+                                <td>${row.내신점수 || ''}</td>
+                                <td id="${row.군}-실기점수"></td>
+                                <td id="${row.군}-총점"></td>
                             </tr>
                         `;
                         scoreTable.appendChild(scoreTbody);
@@ -122,28 +122,16 @@
                         const eventTable = document.createElement('table');
                         eventTable.border = 1;
 
-                        const eventCaption = document.createElement('caption');
-                        eventCaption.textContent = `${row.군} (${row.대학명} - ${row.학과명}) 실기 종목`;
-                        eventTable.appendChild(eventCaption);
-
                         const eventTbody = document.createElement('tbody');
+                        const eventRow = document.createElement('tr');
 
-                        // 실기 종목 행 생성 (종목 이름, 입력 칸, 점수 칸)
-                        const eventHeaderRow = document.createElement('tr');
-                        const eventInputRow = document.createElement('tr');
-                        const eventScoreRow = document.createElement('tr');
-
+                        // 실기 종목 생성 (종목 이름, 입력 필드, 점수 필드)
                         for (let i = 1; i <= 6; i++) {
                             const 종목이름 = row[`실기종목${i}`];
                             if (종목이름) {
-                                // 헤더 행
-                                const headerCell = document.createElement('th');
-                                headerCell.textContent = 종목이름;
-                                eventHeaderRow.appendChild(headerCell);
-
-                                // 입력 칸 행
-                                const inputCell = document.createElement('td');
-                                inputCell.innerHTML = `
+                                const cell = document.createElement('td');
+                                cell.innerHTML = `
+                                    <strong>${종목이름}</strong><br>
                                     <input 
                                         type="text" 
                                         placeholder="기록 입력" 
@@ -151,23 +139,15 @@
                                         data-군="${row.군}" 
                                         data-종목="${i}"
                                     >
+                                    <br>
+                                    <span id="${row.군}-종목${i}-점수"></span>
                                 `;
-                                eventInputRow.appendChild(inputCell);
-
-                                // 점수 칸 행
-                                const scoreCell = document.createElement('td');
-                                scoreCell.id = `${row.군}-종목${i}-점수`;
-                                scoreCell.textContent = '-';
-                                eventScoreRow.appendChild(scoreCell);
+                                eventRow.appendChild(cell);
                             }
                         }
 
-                        // 실기 종목 테이블에 행 추가
-                        eventTbody.appendChild(eventHeaderRow);
-                        eventTbody.appendChild(eventInputRow);
-                        eventTbody.appendChild(eventScoreRow);
+                        eventTbody.appendChild(eventRow);
                         eventTable.appendChild(eventTbody);
-
                         scoreTablesDiv.appendChild(eventTable);
                     });
                 } else {
