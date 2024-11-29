@@ -62,7 +62,7 @@
         <h1 id="welcome-message"></h1>
     </header>
     <div id="score-tables">
-        <!-- 군별 점수 테이블 -->
+        <!-- 군별 점수 및 실기 테이블 -->
     </div>
 
     <script>
@@ -92,15 +92,16 @@
 
                     // 데이터를 순회하여 테이블 생성
                     data.forEach(row => {
-                        const table = document.createElement('table');
-                        table.border = 1;
+                        // 점수 테이블 생성
+                        const scoreTable = document.createElement('table');
+                        scoreTable.border = 1;
 
-                        const caption = document.createElement('caption');
-                        caption.textContent = `${row.군} (${row.대학명} - ${row.학과명})`;
-                        table.appendChild(caption);
+                        const scoreCaption = document.createElement('caption');
+                        scoreCaption.textContent = `${row.군} (${row.대학명} - ${row.학과명}) 점수`;
+                        scoreTable.appendChild(scoreCaption);
 
-                        const tbody = document.createElement('tbody');
-                        tbody.innerHTML = `
+                        const scoreTbody = document.createElement('tbody');
+                        scoreTbody.innerHTML = `
                             <tr>
                                 <th>수능점수</th>
                                 <th>내신점수</th>
@@ -114,31 +115,60 @@
                                 <td id="${row.군}-총점">-</td>
                             </tr>
                         `;
+                        scoreTable.appendChild(scoreTbody);
+                        scoreTablesDiv.appendChild(scoreTable);
 
-                        // 실기 종목 행 추가
+                        // 실기 종목 테이블 생성
+                        const eventTable = document.createElement('table');
+                        eventTable.border = 1;
+
+                        const eventCaption = document.createElement('caption');
+                        eventCaption.textContent = `${row.군} (${row.대학명} - ${row.학과명}) 실기 종목`;
+                        eventTable.appendChild(eventCaption);
+
+                        const eventTbody = document.createElement('tbody');
+
+                        // 실기 종목 행 생성 (종목 이름, 입력 칸, 점수 칸)
+                        const eventHeaderRow = document.createElement('tr');
+                        const eventInputRow = document.createElement('tr');
+                        const eventScoreRow = document.createElement('tr');
+
                         for (let i = 1; i <= 6; i++) {
                             const 종목이름 = row[`실기종목${i}`];
                             if (종목이름) {
-                                const recordRow = document.createElement('tr');
-                                recordRow.innerHTML = `
-                                    <td colspan="2">${종목이름}</td>
-                                    <td>
-                                        <input 
-                                            type="text" 
-                                            placeholder="기록 입력" 
-                                            id="${row.군}-종목${i}-기록" 
-                                            data-군="${row.군}" 
-                                            data-종목="${i}"
-                                        >
-                                    </td>
-                                    <td id="${row.군}-종목${i}-점수">-</td>
+                                // 헤더 행
+                                const headerCell = document.createElement('th');
+                                headerCell.textContent = 종목이름;
+                                eventHeaderRow.appendChild(headerCell);
+
+                                // 입력 칸 행
+                                const inputCell = document.createElement('td');
+                                inputCell.innerHTML = `
+                                    <input 
+                                        type="text" 
+                                        placeholder="기록 입력" 
+                                        id="${row.군}-종목${i}-기록" 
+                                        data-군="${row.군}" 
+                                        data-종목="${i}"
+                                    >
                                 `;
-                                tbody.appendChild(recordRow);
+                                eventInputRow.appendChild(inputCell);
+
+                                // 점수 칸 행
+                                const scoreCell = document.createElement('td');
+                                scoreCell.id = `${row.군}-종목${i}-점수`;
+                                scoreCell.textContent = '-';
+                                eventScoreRow.appendChild(scoreCell);
                             }
                         }
 
-                        table.appendChild(tbody);
-                        scoreTablesDiv.appendChild(table);
+                        // 실기 종목 테이블에 행 추가
+                        eventTbody.appendChild(eventHeaderRow);
+                        eventTbody.appendChild(eventInputRow);
+                        eventTbody.appendChild(eventScoreRow);
+                        eventTable.appendChild(eventTbody);
+
+                        scoreTablesDiv.appendChild(eventTable);
                     });
                 } else {
                     alert('점수를 불러오는 데 실패했습니다.');
