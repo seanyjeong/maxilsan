@@ -115,10 +115,11 @@
 
                     // 실기 종목 행 추가
                     for (let i = 1; i <= 6; i++) {
-                        if (row[`실기종목${i}`]) {
+                        const 종목이름 = row[`실기종목${i}`];
+                        if (종목이름) {
                             const recordRow = document.createElement('tr');
                             recordRow.innerHTML = `
-                                <td colspan="2">${row[`실기종목${i}`]}</td>
+                                <td colspan="2">${종목이름}</td>
                                 <td>
                                     <input 
                                         type="text" 
@@ -142,9 +143,9 @@
             }
         });
 
-        // 점수 계산 함수 (임시 공백)
+        // 점수 계산 함수 (현재 공백, 추후 구현 예정)
         function calculateScore(input) {
-            // 나중에 추가될 점수 계산 로직
+            // 나중에 점수 계산 로직 추가 예정
         }
     </script>
 </body>
