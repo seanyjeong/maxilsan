@@ -1,484 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>일맥 대학관리</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>25 로그인</title>
     <style>
-        /* body 스타일 */
         body {
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
-
-        /* 모달창 스타일 */
-        .modal {
-    display: none; /* 모달 숨김 */
-    position: fixed; /* 고정 위치 */
-    z-index: 1; /* 다른 요소 위에 표시되도록 설정 */
-    padding-top: 100px; /* 위에서부터의 여백 */
-    left: 0; /* 왼쪽 정렬 */
-    top: 0; /* 위쪽 정렬 */
-    width: 100%; /* 전체 너비 */
-    height: 100%; /* 전체 높이 */
-    overflow: auto; /* 스크롤이 필요한 경우 스크롤 가능하도록 설정 */
-    /* background-color: rgb(0,0,0); */ /* 배경 색상 설정 (이 부분 주석 처리) */
-    background-image: url('https://github.com/seanyjeong/maxilsan/blob/main/modalimg.png?raw=true'); /* 배경 이미지 설정 */
-    background-size: cover; /* 배경 이미지 크기 조절 (선택 사항) */
-    background-position: center; /* 배경 이미지 위치 조절 (선택 사항) */
-    background-repeat: no-repeat; /* 배경 이미지 반복 방지 (선택 사항) */
-    background-color: rgba(0, 0, 0, 0.4); /* 대체 배경 색상 및 투명도 설정 */
-}
-
-        /* 모달창 내용 스타일 */
-/* 모달 내용 스타일 */
-.modal-content {
-    background-color: #e4caca;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 30%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 10em; /* 내용을 위로 올림 (조절 가능) */
-}
-
-/* 입력 창 스타일 */
-#name, #code {
-    width: 60%; /* 입력 창 너비를 50%로 설정 */
-}
-
-
-/* 타이틀 이미지 스타일 */
-.responsive {
-    position: fixed; /* 추가된 코드 */
-    top: 0; /* 추가된 코드 */
-    width: 100%;
-    height: auto;
-}
-/* 타이틀 이미지 아래의 콘텐츠 스타일 */
-#results {
-    margin-top: 50mm; /* 타이틀 이미지의 높이 */
-    padding-top: 1em; /* 추가 여백 */
-}
-
-/* 가군, 나군, 다군 섹션 스타일 */
-#가군-실기종목, #나군-실기종목, #다군-실기종목 {
-    display: flex; /* 변경된 코드 */
-    justify-content: center; /* 추가된 코드 */
-    font-size: 1.25em;
-    font-weight: bold;
-    margin-right: 1em;
-    width: 100%; /* 섹션의 너비를 100%로 설정 */
-    overflow: auto; /* 추가된 코드 */
-}
-
-/* 테이블 스타일 */
-#가군-실기종목 table, #나군-실기종목 table, #다군-실기종목 table {
-    width: 100%; /* 테이블의 너비를 100%로 설정 */
-}
-
-/* 셀 스타일 */
-#가군-실기종목 td, #나군-실기종목 td, #다군-실기종목 td {
-    width: 1fr; /* 각 셀의 너비를 테이블의 너비에 맞게 조절 */
-}
-/* 입력 칸 스타일 */
-#가군-실기종목 input, #나군-실기종목 input, #다군-실기종목 input {
-    width: 50%; /* 입력 칸의 너비를 50%로 설정 */
-}
-
-/* 모바일 화면에서의 스타일 */
-@media screen and (max-width: 600px) {
-    /* 여기에 모바일 화면에서 적용할 스타일을 추가하세요. */
-    #가군-실기종목, #나군-실기종목, #다군-실기종목 {
-        width: 100%; /* 섹션의 너비를 100%로 설정 */
-    }
-}
+        h1 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+        form {
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-size: 1em;
+            margin-bottom: 10px;
+            display: block;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
     </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+</head>
+<body>
+    <h1>25 로그인</h1>
+    <form id="login-form">
+        <label for="code">식별코드:</label>
+        <input type="text" id="code" name="code" placeholder="식별코드를 입력하세요" required>
+        <button type="submit">로그인</button>
+    </form>
+    <p id="error-message"></p>
 
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
 
-   
-<script>
-$(document).ready(function(){
-    $("#loginModal").show();
+            const code = document.getElementById('code').value;
 
-    $("#submitBtn").click(function(){
-        var name = $("#name").val();
-        var code = $("#code").val();
+            const response = await fetch('/25login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            });
 
-        $.ajax({
-            url: "https://script.google.com/macros/s/AKfycbyvIvMNE99a9dozw1oPZBo9UE8mLmD_5r5tlWpgQtLRfzxWcTjTwm9FqJkxVe_SaEMN/exec",
-            type: "post",
-            data: {name: name, code: code},
-            success: async function(response) {
-                if(response != "failure") {
-                    var data = JSON.parse(response);
-                    console.log(data);
-                    $("#loginModal").hide();
-                    $("#results").show();
-                    var genderText = data.gender === '남' ? '남학생' : '여학생'; // 성별 텍스트 설정
-                    $("#username").text(data.name + " " + genderText + "의 대학정보"); // 사용자 이름과 성별 설정
-                    var labels = ["대학명", "학과명", "수능점수", "내신점수"];
-                    var groups = ["가군", "나군", "다군"];
-                    for (var i = 0; i < groups.length; i++) {
-                        var groupData = data[groups[i]];
-                        if (!groupData) {
-                            // 데이터가 없으면 건너뜁니다.
-                            continue;
-                        }
-                        var totalScore = 0;
-                        for (var j = 0; j < labels.length; j++) {
-                            var value = groupData[labels[j]];
-                            $("#" + groups[i] + "-" + labels[j]).text(value);
-                            var score = parseFloat(value);
-                            if (!isNaN(score)) {
-                                totalScore += score;
-                            }
-                        }
-                        $("#" + groups[i] + "-총점").text(totalScore); // 총점 계산 및 표시
-                        var 실기종목들 = groupData["실기종목"].split(", "); // 실기 종목들 찾기
-                        var 실기종목Container = $("#" + groups[i] + "-실기종목");
-                        실기종목Container.empty(); // 기존의 실기 종목과 입력 칸 제거
+            const result = await response.json();
 
-                        var table = $('<table>'); // 새로운 테이블 생성
-                        var row1 = $('<tr>'); // 첫 번째 행 생성
-                        var row2 = $('<tr>'); // 두 번째 행 생성
-
-                        실기종목들.forEach(function(실기종목, index) {
-                            if (실기종목.trim() !== "") { // 실기 종목이 비어 있지 않은 경우에만 추가
-                                // 실기 종목 추가, 빨간색으로 표시
-                                row1.append('<td class="skill-name" style="color: red;">' + 실기종목 + '</td>');
-                                var input = $('<input type="text" data-group="' + groups[i] + '">'); // 입력 칸 추가
-                                input.on('change', async function() {
-                                    // 입력값이 변경되면, 점수를 계산합니다.
-                                    var value = $(this).val();
-                                    var group = $(this).data('group');
-                                    var groupData = data[group];
-                                    var score = await calculateScore(groupData["대학명"], groupData["학과명"], value, data.gender, index, groupData["행들"]);
-                                    $(this).next().text(score);
-
-                                    // 실기 점수의 합계를 계산하고 업데이트합니다.
-                                    var totalScore = 0;
-                                    $("#" + group + "-실기종목 span").each(function() {
-                                        var score = parseFloat($(this).text());
-                                        if (!isNaN(score)) {
-                                            totalScore += score;
-                                        }
-                                    });
-                                    $("#" + group + "-실기총점").text(totalScore.toFixed(2));
-
-                                    // 기존 총점과 실기 총점을 합산하여 새로운 총점을 계산하고 업데이트합니다.
-                                    var originalTotalScore = 0;
-                                    labels.forEach(function(label) {
-                                        var score = parseFloat($("#" + group + "-" + label).text());
-                                        if (!isNaN(score)) {
-                                            originalTotalScore += score;
-                                        }
-                                    });
-                                    var newTotalScore = originalTotalScore + totalScore;
-                                    $("#" + group + "-총점").text(newTotalScore.toFixed(2));
-
-                                    // cutData를 가져와서 총점과 비교하여 합격 가능성을 계산하고 업데이트합니다.
-                                    var cutData = parseFloat(groupData["cutData"]);
-if (isNaN(cutData)) {
-  // cutData가 숫자로 변환할 수 없는 경우에 대한 처리
-  if (groupData["cutData"] === undefined || groupData["cutData"] === "") {
-    console.log("cutData is undefined or empty");
-  } else {
-    console.log("cutData is not a number: " + groupData["cutData"]);
-  }
-} else {
-  var passPossibility = calculatePassPossibility(newTotalScore, cutData);
-  $("#" + group + "-합격가능성").text(passPossibility + "%");
-}
-                                });
-
-                                row2.append($('<td>').append(input).append('<span>'));
-                            }
-                        });
-
-                        table.append(row1); // 첫 번째 행을 테이블에 추가
-                        table.append(row2); // 두 번째 행을 테이블에 추가
-                        실기종목Container.append(table); // 테이블을 실기종목Container에 추가
-                    }
-                } else {
-                    alert("로그인에 실패했습니다. 이름과 코드를 확인해주세요.");
-                }
+            if (result.success) {
+                // 로그인 성공 시 이름을 로컬 스토리지에 저장하고 다음 페이지로 이동
+                localStorage.setItem('studentName', result.name);
+                window.location.href = '/dashboard.html';
+            } else {
+                document.getElementById('error-message').textContent = result.message;
             }
         });
-    });
-});
-
-function calculatePassPossibility(totalScore, cutData) {
-  var possibility = 70; // 기본 합격 가능성은 60%
-  var difference = totalScore - cutData; // 총점과 cutData의 차이 계산
-
-  if (difference < 0) {
-    // 총점이 cutData보다 작으면, 차이 * 2만큼 합격 가능성을 깎아냅니다.
-    possibility -= Math.abs(difference) * 1.5;
-  } else if (difference > 0) {
-    // 총점이 cutData보다 크면, 차이 * 2만큼 합격 가능성을 높입니다.
-    possibility += difference * 1.5;
-  }
-
-  // 합격 가능성이 0% 미만이면 0%로, 100% 초과이면 100%로 제한합니다.
-  possibility = Math.max(0, Math.min(100, possibility));
-
-  // 소수점 첫째 자리까지 표시합니다.
-  return possibility.toFixed(1);
-}
-
-
-async function calculateScore(대학명, 학과명, value, gender, inputIndex, 행들) {
-    value = Number(value);
-
-    var lookupRange = (gender === '남' ? 행들[inputIndex * 3].slice(3) : 행들[inputIndex * 3 + 2].slice(3)).filter(value => value !== '');
-    var resultRange = 행들[inputIndex * 3 + 1].slice(3).filter(value => value !== '');;
-    var exactMatchIndex = lookupRange.indexOf(value);
-
-    console.log(lookupRange);
-    console.log(resultRange);
-    
-    if (exactMatchIndex !== -1) {
-        return parseFloat(resultRange[exactMatchIndex]).toFixed(2);
-    }
-
-    var closestIndex = lookupRange.findIndex(curr => curr > value);
-
-    if (closestIndex === -1) {
-        return parseFloat(resultRange[resultRange.length - 1]).toFixed(2);
-    } else if (closestIndex === 0) {
-        return parseFloat(resultRange[closestIndex]).toFixed(2);
-    } else {
-        return parseFloat(resultRange[closestIndex - 1]).toFixed(2);
-    }
-}
-
-
-
-
-
-
-
-
-
-</script>
-
-
-
-
-
-
-
-
- 
-</head>
-<body>
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span onclick="$('#loginModal').hide();">&times;</span>
-            <label for="name">이름:</label><br>
-            <input type="text" id="name" name="name"><br>
-            <label for="code">코드:</label><br>
-            <input type="text" id="code" name="code"><br>
-            <button id="submitBtn">로그인</button>
-        </div>
-    </div>
     </script>
-</head>
-<body>
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span onclick="$('#loginModal').hide();">&times;</span>
-            <label for="name">이름:</label><br>
-            <input type="text" id="name" name="name"><br>
-            <label for="code">코드:</label><br>
-            <input type="text" id="code" name="code"><br>
-            <button id="submitBtn">로그인</button>
-        </div>
-    </div>
-    <div id="results" style="display:none;">
-        <img class="responsive" src="https://github.com/seanyjeong/maxilsan/blob/main/ilsanmax.png?raw=true" alt="타이틀 이미지">
-            <h2 id="username" style="text-align:center;"></h2> <!-- 사용자 이름을 표시하는 요소 -->
-            <h3 style="text-align:center;">오늘 실기 입력하고, 합격가능성 보셈</h3> <!-- 제목 추가 -->
-        <h2 style="text-align:center;">가군</h2>
-        <div style="text-align: center;">
-            <span id="가군-대학명" style="display: inline-block; font-size: 20px; font-weight: bold; margin-right: 20px;"></span>
-            <span id="가군-학과명" style="display: inline-block; font-size: 20px; font-weight: bold;"></span>
-        </div>
-        <div style="display: flex; justify-content: space-around;">
-            <div>
-                <p style="text-align:center;"><strong>수능</strong></p>
-                <p id="가군-수능점수" style="text-align:center;"></p>
-            </div>
-            <div>
-                <p style="text-align:center;"><strong>내신</strong></p>
-                <p id="가군-내신점수" style="text-align:center;"></p>
-            </div>
-            <div>
-                <p style="text-align:center;"><strong>실기</strong></p>
-                <p id="가군-실기총점" style="text-align:center;"></p>
-            </div>
-            <div>
-                <p style="text-align:center;"><strong>총점</strong></p>
-                <p id="가군-총점" style="text-align:center;"></p>
-            </div>
-            <div>
-                <p style="text-align:center;"><strong>합격가능성</strong></p>
-                <p id="가군-합격가능성" style="text-align:center;"></p>
-            </div>
-
-        </div>
-<div style="text-align: center;">
-    <span id="가군-실기종목" style="display: inline-block; font-size: 1.25em; font-weight: bold; margin-right: 1em;"></span>
-</div>
-
-    <h2 style="text-align:center;">나군</h2>
-    <div style="text-align: center;">
-        <span id="나군-대학명" style="display: inline-block; font-size: 20px; font-weight: bold; margin-right: 20px;"></span>
-        <span id="나군-학과명" style="display: inline-block; font-size: 20px; font-weight: bold;"></span>
-    </div>
-    <div style="display: flex; justify-content: space-around;">
-        <div>
-            <p style="text-align:center;"><strong>수능</strong></p>
-            <p id="나군-수능점수" style="text-align:center;"></p>
-        </div>
-        <div>
-            <p style="text-align:center;"><strong>내신</strong></p>
-            <p id="나군-내신점수" style="text-align:center;"></p>
-        </div>
-        <div>
-            <p style="text-align:center;"><strong>실기</strong></p>
-            <p id="나군-실기총점" style="text-align:center;"></p>
-        </div>
-        <div>
-            <p style="text-align:center;"><strong>총점</strong></p>
-            <p id="나군-총점" style="text-align:center;"></p>
-        </div>
-        <div>
-            <p style="text-align:center;"><strong>합격가능성</strong></p>
-            <p id="나군-합격가능성" style="text-align:center;"></p>
-        </div>
-    </div>
-<div style="text-align: center;">
-    <span id="나군-실기종목" style="display: inline-block; font-size: 1.25em; font-weight: bold; margin-right: 1em;"></span>
-</div>
-
-    <h2 style="text-align:center;">다군</h2>
-    <div style="text-align: center;">
-        <span id="다군-대학명" style="display: inline-block; font-size: 20px; font-weight: bold; margin-right: 20px;"></span>
-        <span id="다군-학과명" style="display: inline-block; font-size: 20px; font-weight: bold;"></span>
-    </div>
-    <div style="display: flex; justify-content: space-around;">
-        <div>
-            <p style="text-align:center;"><strong>수능</strong></p>
-            <p id="다군-수능점수" style="text-align:center;"></p>
-        </div>
-        <div>
-            <p style="text-align:center;"><strong>내신</strong></p>
-            <p id="다군-내신점수" style="text-align:center;"></p>
-        </div>
-        <div>
-            <p style="text-align:center;"><strong>실기</strong></p>
-            <p id="다군-실기총점" style="text-align:center;"></p>
-        </div>
-        <div>
-            <p style="text-align:center;"><strong>총점</strong></p>
-            <p id="다군-총점" style="text-align:center;"></p>
-        </div>
-        <div>
-            <p style="text-align:center;"><strong>합격가능성</strong></p>
-            <p id="다군-합격가능성" style="text-align:center;"></p>
-        </div>
-    </div>
-<div style="text-align: center;">
-    <span id="다군-실기종목" style="display: inline-block; font-size: 1.25em; font-weight: bold; margin-right: 1em;"></span>
-</div>
-<!-- "저장하기" 버튼 -->
-<div style="text-align: center;">
-    <button id="saveBtn" style="margin-top: 3em; margin-bottom: 3em; padding: 15px 30px; font-size: 20px;">저장하기</button>
-</div>
-<style>
-    #saveBtn:active {
-        background-color: #7db9e8; /* 클릭 시 색상 */
-    }
-</style>
 </body>
-<script>
-$("#saveBtn").click(function(){
-    console.log("Button clicked.");
-
-    var 가군_실기종목이름 = $("#가군-실기종목 td.skill-name").map(function(){ return $(this).text(); }).get();
-    var 가군_실기종목기록점수 = $("#가군-실기종목 input").map(function(){ return { record: this.value, score: $(this).next().text() }; }).get();
-    var 나군_실기종목이름 = $("#나군-실기종목 td.skill-name").map(function(){ return $(this).text(); }).get();
-    var 나군_실기종목기록점수 = $("#나군-실기종목 input").map(function(){ return { record: this.value, score: $(this).next().text() }; }).get();
-    var 다군_실기종목이름 = $("#다군-실기종목 td.skill-name").map(function(){ return $(this).text(); }).get();
-    var 다군_실기종목기록점수 = $("#다군-실기종목 input").map(function(){ return { record: this.value, score: $(this).next().text() }; }).get();
-    var data = {
-        name: $("#name").val(),
-        date: new Date(),
-        가군: {
-            대학명: $("#가군-대학명").text(),
-            학과명: $("#가군-학과명").text(),
-            수능점수: $("#가군-수능점수").text(),
-            내신점수: $("#가군-내신점수").text(),
-            실기점수: $("#가군-실기총점").text(),
-            총점: $("#가군-총점").text(),
-            합격가능성: $("#가군-합격가능성").text(),
-            실기종목이름: 가군_실기종목이름,
-            실기종목기록점수:가군_실기종목기록점수,
-            
-        },
-        나군: {
-            대학명: $("#나군-대학명").text(),
-            학과명: $("#나군-학과명").text(),
-            수능점수: $("#나군-수능점수").text(),
-            내신점수: $("#나군-내신점수").text(),
-            실기점수: $("#나군-실기총점").text(),
-            총점: $("#나군-총점").text(),
-            합격가능성: $("#나군-합격가능성").text(),
-            실기종목이름: 나군_실기종목이름,
-            실기종목기록점수:나군_실기종목기록점수
-        },
-        다군: {
-            대학명: $("#다군-대학명").text(),
-            학과명: $("#다군-학과명").text(),
-            수능점수: $("#다군-수능점수").text(),
-            내신점수: $("#다군-내신점수").text(),
-            실기점수: $("#다군-실기총점").text(),
-            총점: $("#다군-총점").text(),
-            합격가능성: $("#다군-합격가능성").text(),
-            실기종목이름: 다군_실기종목이름,
-            실기종목기록점수:다군_실기종목기록점수
-        }
-    };
-
-    console.log("Sending data:", data);
-
-    $.ajax({
-        url: "https://floating-bastion-46372-6c0136e7df6d.herokuapp.com/https://script.google.com/macros/s/AKfycbyE8BxFukVJld8LP2N8hEhY1_x6hrX4bqfjvMBdGz8F4kWr4HrysfItRxjhIZVX7ovv/exec?",
-        type: "post",
-        data: JSON.stringify(data),
-        contentType: "application/json",
-
-        success: function(response) {
-            alert("데이터가 성공적으로 저장되었습니다.");
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log("Error:", textStatus, errorThrown);
-            console.log("Response text:", jqXHR.responseText);
-            console.log("Status code:", jqXHR.status);
-            if (jqXHR.status === 0 && textStatus === "error") {
-                console.log("A CORS issue may have occurred.");
-            }
-        }
-    });
-});
-
-
-</script>
-
-
 </html>
