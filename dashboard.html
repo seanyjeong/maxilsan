@@ -77,10 +77,10 @@
                 return;
             }
 
-            document.getElementById('welcome-message').textContent = `${name}님 환영합니다!`;
+            document.getElementById('welcome-message').textContent = `${name} 환영한다!오늘도 죽어보자`;
 
             // 점수 가져오기
-            const response = await fetch('/25getStudentScores', {
+            const response = await fetch('https://supermax.kr/25getStudentScores', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name })
