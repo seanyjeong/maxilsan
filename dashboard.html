@@ -91,66 +91,68 @@
                     const data = result.data;
                     const scoreTablesDiv = document.getElementById('score-tables');
 
-                    data.forEach(row => {
-                        const scoreTable = document.createElement('table');
-                        scoreTable.border = 1;
+data.forEach(row => {
+    const scoreTable = document.createElement('table');
+    scoreTable.border = 1;
 
-                        const scoreCaption = document.createElement('caption');
-                        scoreCaption.textContent = `${row.군} (${row.대학명} - ${row.학과명})`;
-                        scoreTable.appendChild(scoreCaption);
+    const scoreCaption = document.createElement('caption');
+    scoreCaption.textContent = `${row.군} (${row.대학명} - ${row.학과명})`;
+    scoreTable.appendChild(scoreCaption);
 
-                        const scoreTbody = document.createElement('tbody');
-                        scoreTbody.innerHTML = `
-                            <tr>
-                                <th>수능점수</th>
-                                <th>내신점수</th>
-                                <th>실기점수</th>
-                                <th>총점</th>
-                            </tr>
-                            <tr>
-                                <td id="${row.군}-수능점수">${row.수능점수 || ''}</td>
-                                <td id="${row.군}-내신점수">${row.내신점수 || ''}</td>
-                                <td id="${row.군}-실기점수"></td>
-                                <td id="${row.군}-총점"></td>
-                            </tr>
-                        `;
-                        scoreTable.appendChild(scoreTbody);
-                        scoreTablesDiv.appendChild(scoreTable);
+    const scoreTbody = document.createElement('tbody');
+    scoreTbody.innerHTML = `
+        <tr>
+            <th>수능점수</th>
+            <th>내신점수</th>
+            <th>실기점수</th>
+            <th>총점</th>
+        </tr>
+        <tr>
+            <td id="${row.군}-수능점수">${row.수능점수 || ''}</td>
+            <td id="${row.군}-내신점수">${row.내신점수 || ''}</td>
+            <td id="${row.군}-실기점수"></td>
+            <td id="${row.군}-총점"></td>
+        </tr>
+    `;
+    scoreTable.appendChild(scoreTbody);
+    scoreTablesDiv.appendChild(scoreTable);
 
-                        const eventTable = document.createElement('table');
-                        eventTable.border = 1;
+    const eventTable = document.createElement('table');
+    eventTable.border = 1;
 
-                        const eventTbody = document.createElement('tbody');
-                        const eventRow = document.createElement('tr');
+    const eventTbody = document.createElement('tbody');
 
-                        for (let i = 1; i <= 6; i++) {
-                            const 종목이름 = row[`실기종목${i}`];
-                            if (종목이름) {
-                                const cell = document.createElement('td');
-                                cell.innerHTML = `
-                                    <strong>${종목이름}</strong><br>
-                                    <input 
-                                        type="text" 
-                                        placeholder="기록 입력" 
-                                        id="${row.군}-종목${i}-기록" 
-                                        data-군="${row.군}" 
-                                        data-university="${row.대학명}" 
-                                        data-major="${row.학과명}" 
-                                        data-gender="${gender}"
-                                        data-record-index="${i - 1}" <!-- 실기종목의 고유 순서 -->
-                                        oninput="calculateScore(this)"
-                                    >
-                                    <br>
-                                    점수: <span id="${row.군}-종목${i}-점수"></span>
-                                `;
-                                eventRow.appendChild(cell);
-                            }
-                        }
+    for (let i = 1; i <= 6; i++) {
+        const 종목이름 = row[`실기종목${i}`];
+        if (종목이름) {
+            const eventRow = document.createElement('tr');
+            eventRow.innerHTML = `
+                <td><strong>${종목이름}</strong></td>
+                <td>
+                    <input 
+                        type="text" 
+                        placeholder="기록 입력" 
+                        id="${row.군}-종목${i}-기록" 
+                        data-군="${row.군}" 
+                        data-university="${row.대학명}" 
+                        data-major="${row.학과명}" 
+                        data-gender="${gender}"
+                        data-record-index="${i - 1}" <!-- 실기종목의 고유 순서 -->
+                        oninput="calculateScore(this)"
+                    >
+                </td>
+                <td>
+                    점수: <span id="${row.군}-종목${i}-점수"></span>
+                </td>
+            `;
+            eventTbody.appendChild(eventRow);
+        }
+    }
 
-                        eventTbody.appendChild(eventRow);
-                        eventTable.appendChild(eventTbody);
-                        scoreTablesDiv.appendChild(eventTable);
-                    });
+    eventTable.appendChild(eventTbody);
+    scoreTablesDiv.appendChild(eventTable);
+});
+
                 } else {
                     alert('점수를 불러오는 데 실패했습니다.');
                 }
