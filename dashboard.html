@@ -55,17 +55,6 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
-        .flex-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            padding: 10px 0;
-        }
-        .flex-item {
-            flex: 1 1 20%;
-            text-align: center;
-            margin: 5px;
-        }
     </style>
 </head>
 <body>
@@ -87,7 +76,6 @@
 
             document.getElementById('welcome-message').textContent = `${name} 환영합니다!`;
 
-            // 점수 가져오기
             try {
                 const response = await fetch('https://supermax.kr/25getStudentScores', {
                     method: 'POST',
@@ -101,7 +89,6 @@
                     const data = result.data;
                     const scoreTablesDiv = document.getElementById('score-tables');
 
-                    // 데이터를 순회하여 테이블 생성
                     data.forEach(row => {
                         // 점수 테이블 생성
                         const scoreTable = document.createElement('table');
@@ -136,7 +123,6 @@
                         const eventTbody = document.createElement('tbody');
                         const eventRow = document.createElement('tr');
 
-                        // 실기 종목 생성 (종목 이름, 입력 필드, 점수 필드)
                         for (let i = 1; i <= 6; i++) {
                             const 종목이름 = row[`실기종목${i}`];
                             if (종목이름) {
@@ -150,8 +136,8 @@
                                         data-군="${row.군}" 
                                         data-university="${row.대학명}" 
                                         data-major="${row.학과명}" 
-                                        data-gender="${row.성별}"
-                                        data-종목="${i}"
+                                        data-gender="${row.성별}" 
+                                        data-종목="${i}" 
                                         oninput="calculateScore(this)"
                                     >
                                     <br>
@@ -174,61 +160,46 @@
             }
         });
 
-        // 점수 계산 함수
-     async function calculateScore(input) {
-    const 군 = input.dataset.군;
-    const 종목 = input.dataset.종목;
-    const 기록 = parseFloat(input.value);
+        async function calculateScore(input) {
+            const 군 = input.dataset.군;
+            const 종목 = input.dataset.종목;
+            const 기록 = parseFloat(input.value);
 
-    const universityName = input.dataset.university;
-    const majorName = input.dataset.major;
-    const gender = localStorage.getItem('studentGender'); // 저장된 성별 가져오기
+            const universityName = input.dataset.university;
+            const majorName = input.dataset.major;
+            const gender = localStorage.getItem('studentGender');
 
-    try {
-        const response = await fetch('https://supermax.kr/25calculatePracticalScores', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                universityName, 
-                majorName, 
-                gender, 
-                records: [기록] 
-            })
-        });
+            try {
+                const response = await fetch('https://supermax.kr/25calculatePracticalScores', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        universityName,
+                        majorName,
+                        gender,
+                        records: [기록]
+                    })
+                });
 
-        const result = await response.json();
+                const result = await response.json();
 
-        if (result.success) {
-            // 점수 콘솔 출력
-            console.log('점수 계산 성공:', result.scores[0]);
-            console.log('학교번호:', result.schoolNumber);
-            console.log('기록 및 배점 데이터:', result.practicalPoints);
-
-            // 점수 반영
-            const 점수칸 = document.getElementById(`${군}-종목${종목}-점수`);
-            점수칸.textContent = result.scores[0] || ''; // 점수 출력
-
-            // 실기 점수 업데이트
-            updateTotalScore();
-        } else {
-            console.error('점수 계산 오류:', result.message);
+                if (result.success) {
+                    const 점수칸 = document.getElementById(`${군}-종목${종목}-점수`);
+                    점수칸.textContent = result.scores[0] || '';
+                    updateTotalScore(군);
+                } else {
+                    console.error('점수 계산 오류:', result.message);
+                }
+            } catch (error) {
+                console.error('점수 계산 오류:', error);
+            }
         }
-    } catch (error) {
-        console.error('점수 계산 오류:', error);
-    }
-}
 
-        // 총점 업데이트 함수
         function updateTotalScore(군) {
             const 수능점수칸 = document.getElementById(`${군}-수능점수`);
             const 내신점수칸 = document.getElementById(`${군}-내신점수`);
             const 실기점수칸 = document.getElementById(`${군}-실기점수`);
             const 총점칸 = document.getElementById(`${군}-총점`);
-
-            if (!수능점수칸 || !내신점수칸 || !실기점수칸 || !총점칸) {
-                console.warn(`필수 점수 칸을 찾을 수 없습니다: ${군}`);
-                return;
-            }
 
             const 수능점수 = parseFloat(수능점수칸.textContent) || 0;
             const 내신점수 = parseFloat(내신점수칸.textContent) || 0;
