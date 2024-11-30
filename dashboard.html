@@ -89,7 +89,7 @@
                     const data = result.data;
                     const scoreTablesDiv = document.getElementById('score-tables');
 
-                    data.forEach(row => {
+                    data.forEach((row, groupIndex) => {
                         // 점수 테이블 생성
                         const scoreTable = document.createElement('table');
                         scoreTable.border = 1;
@@ -134,10 +134,8 @@
                                         placeholder="기록 입력" 
                                         id="${row.군}-종목${i}-기록" 
                                         data-군="${row.군}" 
-                                        data-university="${row.대학명}" 
-                                        data-major="${row.학과명}" 
-                                        data-gender="${row.성별}" 
-                                        data-종목="${i}" 
+                                        data-group-index="${groupIndex}" 
+                                        data-event-index="${i - 1}" 
                                         oninput="calculateScore(this)"
                                     >
                                     <br>
@@ -162,29 +160,30 @@
 
         async function calculateScore(input) {
             const 군 = input.dataset.군;
-            const 종목 = input.dataset.종목;
+            const groupIndex = parseInt(input.dataset.groupIndex, 10);
+            const eventIndex = parseInt(input.dataset.eventIndex, 10);
             const 기록 = parseFloat(input.value);
 
-            const universityName = input.dataset.university;
-            const majorName = input.dataset.major;
-            const gender = localStorage.getItem('studentGender');
+            if (isNaN(기록)) {
+                console.warn('Invalid record input:', input.value);
+                return;
+            }
 
             try {
                 const response = await fetch('https://supermax.kr/25calculatePracticalScores', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        universityName,
-                        majorName,
-                        gender,
-                        records: [기록]
+                    body: JSON.stringify({ 
+                        groupIndex, 
+                        eventIndex, 
+                        기록 
                     })
                 });
 
                 const result = await response.json();
 
                 if (result.success) {
-                    const 점수칸 = document.getElementById(`${군}-종목${종목}-점수`);
+                    const 점수칸 = document.getElementById(`${군}-종목${eventIndex + 1}-점수`);
                     점수칸.textContent = result.scores[0] || '';
                     updateTotalScore(군);
                 } else {
