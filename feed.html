@@ -54,14 +54,13 @@
 <!-- 피드 보기 -->
 <section>
   <h3>피드 목록</h3>
-  <button onclick="loadFeeds()">전체 피드</button>
-  <button onclick="loadMyFeeds()">내 피드</button>
+  <button onclick="loadFeeds('/feeds')">전체 피드</button>
+  <button onclick="loadFeeds('/my-feeds')">내 피드</button>
   <div id="feeds"></div>
 </section>
 
 <script>
 const api = 'https://supermax.kr/feed';
-
 
 async function register() {
   const user = {
@@ -118,8 +117,12 @@ async function addFeed() {
   else alert('업로드 실패');
 }
 
-async function loadFeeds(endpoint='/feeds') {
+async function loadFeeds(endpoint) {
   const res = await fetch(`${api}${endpoint}`);
+  if (!res.ok) {
+    alert('서버 오류: ' + res.status);
+    return;
+  }
   const feeds = await res.json();
   const feedsDiv = document.getElementById('feeds'); feedsDiv.innerHTML='';
 
@@ -137,12 +140,10 @@ async function loadFeeds(endpoint='/feeds') {
   });
 }
 
-function loadMyFeeds() { loadFeeds('/my-feeds'); }
-
 async function likeFeed(feedId){ alert('좋아요 기능 준비 중'); }
 async function commentFeed(feedId){ alert('댓글 기능 준비 중'); }
 
-loadFeeds();
+loadFeeds('/feeds');
 </script>
 
 </body>
