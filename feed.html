@@ -118,27 +118,41 @@ async function addFeed() {
 }
 
 async function loadFeeds(endpoint) {
-  const res = await fetch(`${api}${endpoint}`);
+  const headers = {};
+  if (endpoint === '/my-feeds') {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+    headers['Authorization'] = 'Bearer ' + token;
+  }
+
+  const res = await fetch(`${api}${endpoint}`, { headers });
+
   if (!res.ok) {
     alert('서버 오류: ' + res.status);
     return;
   }
-  const feeds = await res.json();
-  const feedsDiv = document.getElementById('feeds'); feedsDiv.innerHTML='';
 
-  feeds.forEach(feed=>{
+  const feeds = await res.json();
+  const feedsDiv = document.getElementById('feeds');
+  feedsDiv.innerHTML = '';
+
+  feeds.forEach(feed => {
     feedsDiv.innerHTML += `<div class="feed">
       <div class="profile">
-        <img src="${feed.profile_image||'https://via.placeholder.com/40'}">
+        <img src="${feed.profile_image || 'https://placehold.co/40x40'}">
         <strong>${feed.username}</strong>
       </div>
-      <p>${feed.content||''}</p>
-      ${feed.media_url ? (feed.media_url.includes('.mp4')?`<video controls src="${feed.media_url}"></video>`:`<img src="${feed.media_url}">`) : ''}
+      <p>${feed.content || ''}</p>
+      ${feed.media_url ? (feed.media_url.includes('.mp4') ? `<video controls src="${feed.media_url}"></video>` : `<img src="${feed.media_url}">`) : ''}
       <button onclick="likeFeed(${feed.id})">👍좋아요</button>
       <button onclick="commentFeed(${feed.id})">💬댓글</button>
     </div>`;
   });
 }
+
 
 async function likeFeed(feedId){ alert('좋아요 기능 준비 중'); }
 async function commentFeed(feedId){ alert('댓글 기능 준비 중'); }
