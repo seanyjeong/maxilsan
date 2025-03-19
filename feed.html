@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MaxFeed</title>
+  <link href="https://cdn.jsdelivr.net/npm/water.css@2/out/light.min.css" rel="stylesheet">
+  <style>
+    .feed { border-bottom: 1px solid #ddd; padding: 15px 0; }
+    .profile img { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
+    .media img, video { max-height: 300px; width: 100%; object-fit: cover; border-radius: 8px; }
+    button { margin-right: 5px; }
+  </style>
+</head>
+<body>
+
+<h2>🔥 Max Feed 🔥</h2>
+
+<!-- 회원가입 -->
+<section>
+  <h3>회원가입</h3>
+  <input type="text" id="new_username" placeholder="아이디">
+  <input type="password" id="new_password" placeholder="비밀번호">
+  <input type="text" id="name" placeholder="이름">
+  <input type="date" id="birth_date">
+  <input type="text" id="phone" placeholder="전화번호">
+  <input type="text" id="school" placeholder="학교">
+  <input type="text" id="grade" placeholder="학년">
+  <select id="gender">
+    <option value="male">남성</option>
+    <option value="female">여성</option>
+  </select>
+  <label><input type="checkbox" id="consent"> 개인정보 제공에 동의합니다.</label><br>
+  <button onclick="register()">가입하기</button>
+</section>
+
+<!-- 로그인/로그아웃 -->
+<section>
+  <h3>로그인</h3>
+  <input type="text" id="username" placeholder="아이디">
+  <input type="password" id="password" placeholder="비밀번호">
+  <button onclick="login()">로그인</button>
+  <button onclick="logout()">로그아웃</button>
+</section>
+
+<!-- 피드 올리기 -->
+<section>
+  <h3>피드 올리기</h3>
+  <textarea id="content" placeholder="내용"></textarea><br>
+  <input type="file" id="file">
+  <button onclick="addFeed()">업로드</button>
+</section>
+
+<!-- 피드 보기 -->
+<section>
+  <h3>피드 목록</h3>
+  <button onclick="loadFeeds()">전체 피드</button>
+  <button onclick="loadMyFeeds()">내 피드</button>
+  <div id="feeds"></div>
+</section>
+
+<script>
+const api = 'http://supermax.kr:5000';
+
+async function register() {
+  const user = {
+    username: document.getElementById('new_username').value,
+    password: document.getElementById('new_password').value,
+    name: document.getElementById('name').value,
+    birth_date: document.getElementById('birth_date').value,
+    phone: document.getElementById('phone').value,
+    school: document.getElementById('school').value,
+    grade: document.getElementById('grade').value,
+    gender: document.getElementById('gender').value,
+    consent: document.getElementById('consent').checked
+  };
+
+  const res = await fetch(`${api}/register`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(user)
+  });
+
+  if(res.ok) alert('가입 성공!');
+  else alert('가입 실패');
+}
+
+async function login() {
+  const res = await fetch(`${api}/login`, {
+    method: 'POST', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      username: document.getElementById('username').value,
+      password: document.getElementById('password').value
+    })
+  });
+
+  const data = await res.json();
+  if (res.ok) {
+    localStorage.setItem('token', data.token);
+    alert('로그인 성공');
+  } else alert('로그인 실패');
+}
+
+function logout(){ localStorage.removeItem('token'); alert('로그아웃됨'); }
+
+async function addFeed() {
+  const formData = new FormData();
+  formData.append('content', document.getElementById('content').value);
+  formData.append('file', document.getElementById('file').files[0]);
+
+  const res = await fetch(`${api}/add-feed`, {
+    method:'POST',
+    headers:{'Authorization':'Bearer '+localStorage.getItem('token')},
+    body:formData
+  });
+
+  if(res.ok) alert('업로드 완료');
+  else alert('업로드 실패');
+}
+
+async function loadFeeds(endpoint='/feeds') {
+  const res = await fetch(`${api}${endpoint}`);
+  const feeds = await res.json();
+  const feedsDiv = document.getElementById('feeds'); feedsDiv.innerHTML='';
+
+  feeds.forEach(feed=>{
+    feedsDiv.innerHTML += `<div class="feed">
+      <div class="profile">
+        <img src="${feed.profile_image||'https://via.placeholder.com/40'}">
+        <strong>${feed.username}</strong>
+      </div>
+      <p>${feed.content||''}</p>
+      ${feed.media_url ? (feed.media_url.includes('.mp4')?`<video controls src="${feed.media_url}"></video>`:`<img src="${feed.media_url}">`) : ''}
+      <button onclick="likeFeed(${feed.id})">👍좋아요</button>
+      <button onclick="commentFeed(${feed.id})">💬댓글</button>
+    </div>`;
+  });
+}
+
+function loadMyFeeds() { loadFeeds('/my-feeds'); }
+
+async function likeFeed(feedId){ alert('좋아요 기능 준비 중'); }
+async function commentFeed(feedId){ alert('댓글 기능 준비 중'); }
+
+loadFeeds();
+</script>
+
+</body>
+</html>
