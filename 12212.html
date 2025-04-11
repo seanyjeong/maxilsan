@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>조별 실기 기록 입력</title>
+  <link href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.min.css" rel="stylesheet" />
+  <style>
+    body {
+      max-width: 600px;
+      margin: auto;
+      padding: 1em;
+      text-align: center;
+    }
+    .form-controls {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1em;
+      margin-top: 1em;
+    }
+    .form-controls label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-weight: bold;
+    }
+    .exam-btn {
+      padding: 0.5em 1em;
+      font-size: 1em;
+      background: #e0e0e0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .exam-btn.saved {
+      background: #b2fab4;
+      font-weight: bold;
+    }
+    .exam-btn:hover {
+      background: #ccc;
+    }
+    .student-info {
+      margin: 1em 0;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 1em;
+    }
+    .student-info table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .student-info th, .student-info td {
+      padding: 0.6em;
+      border-bottom: 1px solid #eee;
+    }
+    form {
+      margin-top: 1em;
+    }
+    .success { color: green; }
+    .error { color: red; }
+    .pagination {
+      margin-top: 1em;
+    }
+    .pagination button {
+      margin: 0 0.3em;
+      padding: 0.3em 0.6em;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+<h2>조별 실기 기록 입력</h2>
+
+<div class="form-controls">
+  <label>
+    조 선택
+    <select id="groupSelect"></select>
+  </label>
+  <label>
+    측정 종목
+    <select id="eventSelect">
+      <option value="제멀">제자리멀리뛰기</option>
+      <option value="10m">10m 왕복달리기</option>
+      <option value="좌전굴">좌전굴</option>
+      <option value="배근력">배근력</option>
+      <option value="메디신볼">메디신볼던지기</option>
+    </select>
+  </label>
+</div>
+
+<div id="examList" class="row"></div>
+<div class="pagination" id="pagination"></div>
+<div id="studentInfo" class="student-info" style="display: none;"></div>
+<form id="recordForm" style="display: none;">
+  <label><input type="checkbox" id="foulCheck"> 파울 (F)</label>
+  <input type="number" step="any" name="record" id="recordInput" placeholder="기록" required />
+  <button type="submit">저장</button>
+</form>
+<p id="result"></p>
+
+<script>
+function getField(event, type) {
+  const map = {
+    '제멀': 'jump',
+    '10m': 'shuttle',
+    '좌전굴': 'sit_reach',
+    '배근력': 'back_strength',
+    '메디신볼': 'medicineball'
+  };
+  return `${map[event]}_${type}`;
+}
+
+const groupSelect = document.getElementById('groupSelect');
+const eventSelect = document.getElementById('eventSelect');
+const examList = document.getElementById('examList');
+const pagination = document.getElementById('pagination');
+const studentInfo = document.getElementById('studentInfo');
+const form = document.getElementById('recordForm');
+const result = document.getElementById('result');
+const foulCheck = document.getElementById('foulCheck');
+const recordInput = document.getElementById('recordInput');
+
+let selectedExam = '';
+let currentBranch = '';
+let currentGender = '';
+let currentGroup = '';
+let currentEvent = '제멀';
+let studentList = [];
+const pageSize = 30;
+let currentPage = 1;
+
+foulCheck.addEventListener('change', () => {
+  recordInput.disabled = foulCheck.checked;
+  if (foulCheck.checked) recordInput.value = '';
+});
+
+groupSelect.addEventListener('change', async () => {
+  currentGroup = groupSelect.value;
+  if (!currentGroup) return;
+  await loadExams();
+});
+
+eventSelect.addEventListener('change', async () => {
+  currentEvent = eventSelect.value;
+  if (currentGroup) {
+    await loadExams();
+  }
+});
+
+async function loadGroupList() {
+  const res = await fetch('https://supermax.kr/feed/group-summary');
+  const groups = await res.json();
+  groupSelect.innerHTML = '<option value="">선택</option>';
+  groups.forEach(({ group_no }) => {
+    const opt = document.createElement('option');
+    opt.value = group_no;
+    opt.textContent = `${group_no}조`;
+    groupSelect.appendChild(opt);
+  });
+}
+
+async function loadExams() {
+  const res = await fetch(`https://supermax.kr/feed/group/${currentGroup}`);
+  studentList = await res.json();
+  currentPage = 1;
+  renderExamList();
+}
+
+function renderExamList() {
+  examList.innerHTML = '';
+  pagination.innerHTML = '';
+  const start = (currentPage - 1) * pageSize;
+  const paginated = studentList.slice(start, start + pageSize);
+  const recordField = getField(currentEvent, 'record');
+
+  paginated.forEach(e => {
+    const btn = document.createElement('button');
+    btn.className = 'exam-btn';
+    btn.textContent = e.exam_number;
+    if (e[recordField] !== null && e[recordField] !== '') btn.classList.add('saved');
+    btn.onclick = () => loadStudent(e.exam_number);
+    examList.appendChild(btn);
+  });
+
+  const totalPages = Math.ceil(studentList.length / pageSize);
+  for (let i = 1; i <= totalPages; i++) {
+    const pBtn = document.createElement('button');
+    pBtn.textContent = i;
+    if (i === currentPage) pBtn.style.fontWeight = 'bold';
+    pBtn.onclick = () => {
+      currentPage = i;
+      renderExamList();
+    };
+    pagination.appendChild(pBtn);
+  }
+}
+
+async function loadStudent(exam_number) {
+  const res = await fetch(`https://supermax.kr/feed/get-student?exam_number=${exam_number}`);
+  const json = await res.json();
+  if (json.success) {
+    const { name, school, grade, branch, gender } = json.student;
+    selectedExam = String(exam_number);
+    currentBranch = branch;
+    currentGender = gender;
+
+    const student = studentList.find(s => s.exam_number == selectedExam);
+    const recordField = getField(currentEvent, 'record');
+    const prevRecord = student ? student[recordField] : '';
+
+    studentInfo.innerHTML = `
+      <table>
+        <tr><th>이름</th><td>${name}</td></tr>
+        <tr><th>학교</th><td>${school}</td></tr>
+        <tr><th>학년</th><td>${grade}</td></tr>
+        <tr><th>성별</th><td>${gender}</td></tr>
+        <tr><th>지점</th><td>${branch}</td></tr>
+      </table>
+    `;
+
+    recordInput.value = prevRecord === 'F' ? '' : prevRecord;
+    foulCheck.checked = prevRecord === 'F';
+    recordInput.disabled = foulCheck.checked;
+    studentInfo.style.display = 'block';
+    form.style.display = 'block';
+    result.textContent = '';
+  }
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const record = foulCheck.checked ? 'F' : parseFloat(recordInput.value);
+  const data = {
+    exam_number: selectedExam,
+    branch: currentBranch,
+    gender: currentGender,
+    event: currentEvent,
+    record
+  };
+
+  const res = await fetch('https://supermax.kr/feed/submit-record', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+
+  const json = await res.json();
+  if (json.success) {
+    result.innerHTML = `✅ ${currentEvent} ${record} → ${json.score}점`;
+    result.className = 'success';
+    const recordField = getField(currentEvent, 'record');
+    const student = studentList.find(s => s.exam_number == selectedExam);
+    if (student) student[recordField] = record;
+    renderExamList();
+  } else {
+    result.textContent = '❌ 저장 실패';
+    result.className = 'error';
+  }
+});
+
+loadGroupList();
+</script>
+</body>
+</html>
